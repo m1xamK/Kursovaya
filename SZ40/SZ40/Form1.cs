@@ -11,6 +11,15 @@ namespace SZ40
             InitializeComponent();
         }
 
+
+        private bool isKeyDown;
+
+        private int countSymbols = 0;
+
+        private Teletype teletype = new Teletype();
+
+        private Identificators identificatorDictionary = new Identificators();
+
         /// <summary>
         /// Этот метод берет последний символ из текст бокса и подает его на телетайп.
         /// P.S.: Если не использовать isKeyDown, то метод зацикливается, реагируя на свои же внесенные изменения. 
@@ -18,6 +27,15 @@ namespace SZ40
         /// </summary>
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
+            // Блокировка ключей, вывод идентификатора в textBox2.
+            if (textBox1.Text.Length == 1)
+            {
+                maskedTextBox1.ReadOnly = true;
+                maskedTextBox2.ReadOnly = true;
+
+                textBox2.Text = identificatorDictionary.GetStringArray(maskedTextBox2.Text);
+            }
+
             if (isKeyDown)
             {
                 isKeyDown = false;
@@ -30,6 +48,8 @@ namespace SZ40
                 textBox1.Select(textBox1.Text.Length, 0); // Установка курсора в конец.
                 this.countSymbols = this.textBox1.Text.Length;                    
             }
+
+           
         }
 
         /// <summary>
@@ -40,13 +60,8 @@ namespace SZ40
             this.isKeyDown = true;
         }
 
-        private bool isKeyDown;
-
-        private int countSymbols = 0;
-
-        private Teletype teletype = new Teletype();
-
         /// <summary>
+        /// Save button.
         /// Сохраняет долговременный ключ, сдвиги и текст из textBox1 в файл.
         /// </summary>
         /// <param name="sender"></param>
@@ -77,6 +92,7 @@ namespace SZ40
         }
 
         /// <summary>
+        /// Load Button
         /// Загружает долговременный ключ, сдвиги колес и текст из файла
         /// </summary>
         /// <param name="sender"></param>
@@ -115,6 +131,20 @@ namespace SZ40
                 maskedTextBox2.Text += random.Next(4);
                 maskedTextBox2.Text += random.Next(10);
             }
+        }
+
+        /// <summary>
+        /// Reset button
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void resetToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            maskedTextBox1.ReadOnly = false;
+            maskedTextBox2.ReadOnly = false;
+            textBox1.Text = "";
+            textBox2.Text = "";
+            teletype = new Teletype();
         }
     }
 

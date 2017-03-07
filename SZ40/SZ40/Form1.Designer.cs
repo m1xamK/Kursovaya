@@ -37,6 +37,7 @@
             this.maskedTextBox2 = new System.Windows.Forms.MaskedTextBox();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.gToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.resetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tOOLSToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.chooseLongtermKeyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
@@ -113,7 +114,6 @@
             // 
             this.maskedTextBox2.Location = new System.Drawing.Point(36, 63);
             this.maskedTextBox2.Margin = new System.Windows.Forms.Padding(4);
-            this.maskedTextBox2.Mask = "000000000000";
             this.maskedTextBox2.Name = "maskedTextBox2";
             this.maskedTextBox2.Size = new System.Drawing.Size(102, 22);
             this.maskedTextBox2.TabIndex = 9;
@@ -134,9 +134,18 @@
             // 
             // gToolStripMenuItem
             // 
+            this.gToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.resetToolStripMenuItem});
             this.gToolStripMenuItem.Name = "gToolStripMenuItem";
             this.gToolStripMenuItem.Size = new System.Drawing.Size(47, 24);
             this.gToolStripMenuItem.Text = "FILE";
+            // 
+            // resetToolStripMenuItem
+            // 
+            this.resetToolStripMenuItem.Name = "resetToolStripMenuItem";
+            this.resetToolStripMenuItem.Size = new System.Drawing.Size(120, 26);
+            this.resetToolStripMenuItem.Text = "Reset";
+            this.resetToolStripMenuItem.Click += new System.EventHandler(this.resetToolStripMenuItem_Click);
             // 
             // tOOLSToolStripMenuItem
             // 
@@ -203,6 +212,7 @@
         private System.Windows.Forms.ToolStripMenuItem chooseLongtermKeyToolStripMenuItem;
         private System.ComponentModel.BackgroundWorker backgroundWorker1;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.ToolStripMenuItem resetToolStripMenuItem;
 
     }
 }

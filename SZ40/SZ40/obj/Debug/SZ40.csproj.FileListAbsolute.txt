@@ -7,3 +7,12 @@ C:\Users\Mikhail\Documents\Visual Studio 2013\Projects\Kursovaya-master\SZ40\SZ4
 C:\Users\Mikhail\Documents\Visual Studio 2013\Projects\Kursovaya-master\SZ40\SZ40\obj\Debug\SZ40.exe
 C:\Users\Mikhail\Documents\Visual Studio 2013\Projects\Kursovaya-master\SZ40\SZ40\obj\Debug\SZ40.pdb
 C:\Users\Mikhail\Documents\Visual Studio 2013\Projects\Kursovaya-master\SZ40\SZ40\obj\Debug\SZ40.csprojResolveAssemblyReference.cache
+C:\Users\Mikhail\Documents\Visual Studio 2013\Projects\Kursovaya\Kursovaya\SZ40\SZ40\bin\Debug\SZ40.exe.config
+C:\Users\Mikhail\Documents\Visual Studio 2013\Projects\Kursovaya\Kursovaya\SZ40\SZ40\obj\Debug\SZ40.exe
+C:\Users\Mikhail\Documents\Visual Studio 2013\Projects\Kursovaya\Kursovaya\SZ40\SZ40\obj\Debug\SZ40.pdb
+C:\Users\Mikhail\Documents\Visual Studio 2013\Projects\Kursovaya\Kursovaya\SZ40\SZ40\bin\Debug\SZ40.exe
+C:\Users\Mikhail\Documents\Visual Studio 2013\Projects\Kursovaya\Kursovaya\SZ40\SZ40\bin\Debug\SZ40.pdb
+C:\Users\Mikhail\Documents\Visual Studio 2013\Projects\Kursovaya\Kursovaya\SZ40\SZ40\obj\Debug\SZ40.csprojResolveAssemblyReference.cache
+C:\Users\Mikhail\Documents\Visual Studio 2013\Projects\Kursovaya\Kursovaya\SZ40\SZ40\obj\Debug\SZ40.Form1.resources
+C:\Users\Mikhail\Documents\Visual Studio 2013\Projects\Kursovaya\Kursovaya\SZ40\SZ40\obj\Debug\SZ40.Properties.Resources.resources
+C:\Users\Mikhail\Documents\Visual Studio 2013\Projects\Kursovaya\Kursovaya\SZ40\SZ40\obj\Debug\SZ40.csproj.GenerateResource.Cache
