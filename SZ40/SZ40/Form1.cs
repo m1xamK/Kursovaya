@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 using System.IO;
+using System.Text;
 
 namespace SZ40
 {
@@ -9,8 +10,13 @@ namespace SZ40
         public Form1()
         {
             InitializeComponent();
-        }
 
+            numericUpDownArr = new NumericUpDown[] {
+            numericUpDown1, numericUpDown2, numericUpDown3, numericUpDown4, numericUpDown5, numericUpDown6,
+            numericUpDown7, numericUpDown8, numericUpDown9, numericUpDown10, numericUpDown11, numericUpDown12, };
+            //rotatesPositions = new RotatesPositions(numericUpDownArr);
+
+        }
 
         private bool isKeyDown;
 
@@ -18,7 +24,9 @@ namespace SZ40
 
         private Teletype teletype = new Teletype();
 
-        private Identificators identificatorDictionary = new Identificators();
+        //private Identificators identificatorDictionary = new Identificators();
+        private NumericUpDown[] numericUpDownArr;
+        //private RotatesPositions rotatesPositions;
 
         /// <summary>
         /// Этот метод берет последний символ из текст бокса и подает его на телетайп.
@@ -26,26 +34,32 @@ namespace SZ40
         /// А так только по нажатию клавиши.
         /// </summary>
         private void textBox1_TextChanged(object sender, EventArgs e)
-        {
-            // Блокировка ключей, вывод идентификатора в textBox2.
-            if (textBox1.Text.Length == 1)
-            {
-                maskedTextBox1.ReadOnly = true;
-                maskedTextBox2.ReadOnly = true;
-
-                textBox2.Text = identificatorDictionary.GetStringArray(maskedTextBox2.Text);
-            }
-
+        {        
             if (isKeyDown)
             {
                 isKeyDown = false;
-                for (int i = this.countSymbols; i < this.textBox1.Text.Length; ++i)
+
+                // Блокировка ключей, вывод идентификатора в textBox2.
+                if (textBox1.Text.Length == 1)
                 {
-                    teletype.Input(textBox1.Text[i]); // Ввод символа в телетайп.
+                    maskedTextBox1.ReadOnly = true;
+                    
+                    foreach (NumericUpDown numericUpDown in numericUpDownArr)
+                    {
+                        numericUpDown.ReadOnly = true;
+                        textBox2.Text += numericUpDown.Value.ToString();
+                    }
                 }
 
-                textBox1.Text = teletype.GetText(); // Присваиваем строку из телетайпа в текст бокс.
-                textBox1.Select(textBox1.Text.Length, 0); // Установка курсора в конец.
+                // Ввод символа в телетайп.
+                for (int i = this.countSymbols; i < this.textBox1.Text.Length; ++i)
+                {
+                    teletype.Input(textBox1.Text[i]); 
+                }
+                // Присваиваем строку из телетайпа в текст бокс.
+                textBox1.Text = teletype.GetText();
+                // Установка курсора в конец.
+                textBox1.Select(textBox1.Text.Length, 0);
                 this.countSymbols = this.textBox1.Text.Length;                    
             }
 
@@ -58,27 +72,6 @@ namespace SZ40
         private void textBox1_KeyDown(object sender, KeyEventArgs e)
         {
             this.isKeyDown = true;
-        }
-
-        /// <summary>
-        /// Save button.
-        /// Сохраняет долговременный ключ, сдвиги и текст из textBox1 в файл.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void button1_Click(object sender, EventArgs e)
-        {
-            SaveFileDialog saveFileDialog = new SaveFileDialog();
-            saveFileDialog.DefaultExt = ".txt"; // Расширение по умолчанию
-            saveFileDialog.ShowDialog(); // Открывает диалоговое окно
-
-            string path = saveFileDialog.FileName; // Сохраняет путь выбранного файла            
-            if (path == "")
-                return;
-
-            string[] lines = { maskedTextBox1.Text, maskedTextBox2.Text, textBox1.Text }; // Масив содержимого maskedTextBox1 maskedTextBox2 и textBox1
-
-            File.WriteAllLines(path, lines);  // Записывает в файл.
         }
 
         private void maskedTextBox1_MaskInputRejected(object sender, MaskInputRejectedEventArgs e)
@@ -109,11 +102,33 @@ namespace SZ40
             using (StreamReader sr = new StreamReader(path)) // Считывает ключ
             {
                 maskedTextBox1.Text = sr.ReadLine();
-                maskedTextBox2.Text = sr.ReadLine();
+                //maskedTextBox2.Text = sr.ReadLine();
 
                 while (sr.Peek() >= 0)
                     textBox1.Text += sr.ReadLine() + " ";
             }
+        }
+
+
+        /// <summary>
+        /// Save button.
+        /// Сохраняет долговременный ключ, сдвиги и текст из textBox1 в файл.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void button1_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.DefaultExt = ".txt"; // Расширение по умолчанию
+            saveFileDialog.ShowDialog(); // Открывает диалоговое окно
+
+            string path = saveFileDialog.FileName; // Сохраняет путь выбранного файла            
+            if (path == "")
+                return;
+
+            string[] lines = { maskedTextBox1.Text, /*maskedTextBox2.Text,*/ textBox1.Text }; // Масив содержимого maskedTextBox1 maskedTextBox2 и textBox1
+
+            File.WriteAllLines(path, lines);  // Записывает в файл.
         }
 
         private void label1_Click(object sender, EventArgs e)
@@ -121,18 +136,6 @@ namespace SZ40
 
         }
         
-        private void label2_Click(object sender, EventArgs e)
-        {
-            maskedTextBox2.Text = "";
-            Random random = new Random();
-
-            for (int i = 0; i < 6; ++i)
-            {
-                maskedTextBox2.Text += random.Next(4);
-                maskedTextBox2.Text += random.Next(10);
-            }
-        }
-
         /// <summary>
         /// Reset button
         /// </summary>
@@ -141,14 +144,26 @@ namespace SZ40
         private void resetToolStripMenuItem_Click(object sender, EventArgs e)
         {
             maskedTextBox1.ReadOnly = false;
-            maskedTextBox2.ReadOnly = false;
+            foreach (NumericUpDown numericUpDown in numericUpDownArr)
+                numericUpDown.ReadOnly = false;
+
             textBox1.Text = "";
             textBox2.Text = "";
             teletype = new Teletype();
         }
+
+        private void label2_Click(object sender, EventArgs e)
+        {
+            Random random = new Random();
+
+            foreach (NumericUpDown numericUpDown in numericUpDownArr)
+            {
+                int max = Convert.ToInt32(numericUpDown.Maximum);
+                decimal number = Convert.ToDecimal(random.Next(max));
+                numericUpDown.Value = number;
+            }
+        }
+
     }
 
-    public partial class Form2 : Form
-    {
-    }
 }
