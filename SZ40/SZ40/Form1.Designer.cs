@@ -74,7 +74,7 @@
             this.save1.Margin = new System.Windows.Forms.Padding(4);
             this.save1.Name = "save1";
             this.save1.Size = new System.Drawing.Size(147, 43);
-            this.save1.TabIndex = 5;
+            this.save1.TabIndex = 16;
             this.save1.Text = "Save";
             this.save1.UseVisualStyleBackColor = true;
             this.save1.Click += new System.EventHandler(this.button1_Click);
@@ -86,7 +86,7 @@
             this.textBox1.Multiline = true;
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(424, 331);
-            this.textBox1.TabIndex = 3;
+            this.textBox1.TabIndex = 14;
             this.textBox1.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
             this.textBox1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBox1_KeyDown);
             // 
@@ -98,7 +98,6 @@
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(424, 331);
             this.textBox2.TabIndex = 99;
-            this.textBox2.Text = "asd";
             this.textBox2.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
             // 
             // button2
@@ -107,7 +106,7 @@
             this.button2.Margin = new System.Windows.Forms.Padding(4);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(147, 43);
-            this.button2.TabIndex = 4;
+            this.button2.TabIndex = 15;
             this.button2.Text = "Load";
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
@@ -197,7 +196,7 @@
             0});
             this.numericUpDown1.Name = "numericUpDown1";
             this.numericUpDown1.Size = new System.Drawing.Size(44, 22);
-            this.numericUpDown1.TabIndex = 101;
+            this.numericUpDown1.TabIndex = 2;
             // 
             // numericUpDown2
             // 
@@ -209,7 +208,7 @@
             0});
             this.numericUpDown2.Name = "numericUpDown2";
             this.numericUpDown2.Size = new System.Drawing.Size(44, 22);
-            this.numericUpDown2.TabIndex = 102;
+            this.numericUpDown2.TabIndex = 3;
             // 
             // numericUpDown3
             // 
@@ -221,7 +220,7 @@
             0});
             this.numericUpDown3.Name = "numericUpDown3";
             this.numericUpDown3.Size = new System.Drawing.Size(44, 22);
-            this.numericUpDown3.TabIndex = 103;
+            this.numericUpDown3.TabIndex = 4;
             // 
             // numericUpDown4
             // 
@@ -233,7 +232,7 @@
             0});
             this.numericUpDown4.Name = "numericUpDown4";
             this.numericUpDown4.Size = new System.Drawing.Size(44, 22);
-            this.numericUpDown4.TabIndex = 104;
+            this.numericUpDown4.TabIndex = 5;
             // 
             // numericUpDown5
             // 
@@ -245,7 +244,7 @@
             0});
             this.numericUpDown5.Name = "numericUpDown5";
             this.numericUpDown5.Size = new System.Drawing.Size(44, 22);
-            this.numericUpDown5.TabIndex = 105;
+            this.numericUpDown5.TabIndex = 6;
             // 
             // numericUpDown6
             // 
@@ -257,7 +256,7 @@
             0});
             this.numericUpDown6.Name = "numericUpDown6";
             this.numericUpDown6.Size = new System.Drawing.Size(44, 22);
-            this.numericUpDown6.TabIndex = 106;
+            this.numericUpDown6.TabIndex = 7;
             // 
             // numericUpDown7
             // 
@@ -269,7 +268,7 @@
             0});
             this.numericUpDown7.Name = "numericUpDown7";
             this.numericUpDown7.Size = new System.Drawing.Size(44, 22);
-            this.numericUpDown7.TabIndex = 107;
+            this.numericUpDown7.TabIndex = 8;
             // 
             // numericUpDown8
             // 
@@ -281,7 +280,7 @@
             0});
             this.numericUpDown8.Name = "numericUpDown8";
             this.numericUpDown8.Size = new System.Drawing.Size(44, 22);
-            this.numericUpDown8.TabIndex = 108;
+            this.numericUpDown8.TabIndex = 9;
             // 
             // numericUpDown9
             // 
@@ -293,7 +292,7 @@
             0});
             this.numericUpDown9.Name = "numericUpDown9";
             this.numericUpDown9.Size = new System.Drawing.Size(44, 22);
-            this.numericUpDown9.TabIndex = 109;
+            this.numericUpDown9.TabIndex = 10;
             // 
             // numericUpDown10
             // 
@@ -305,7 +304,7 @@
             0});
             this.numericUpDown10.Name = "numericUpDown10";
             this.numericUpDown10.Size = new System.Drawing.Size(44, 22);
-            this.numericUpDown10.TabIndex = 110;
+            this.numericUpDown10.TabIndex = 11;
             // 
             // numericUpDown11
             // 
@@ -317,7 +316,7 @@
             0});
             this.numericUpDown11.Name = "numericUpDown11";
             this.numericUpDown11.Size = new System.Drawing.Size(44, 22);
-            this.numericUpDown11.TabIndex = 111;
+            this.numericUpDown11.TabIndex = 12;
             // 
             // numericUpDown12
             // 
@@ -329,7 +328,7 @@
             0});
             this.numericUpDown12.Name = "numericUpDown12";
             this.numericUpDown12.Size = new System.Drawing.Size(44, 22);
-            this.numericUpDown12.TabIndex = 112;
+            this.numericUpDown12.TabIndex = 13;
             // 
             // Form1
             // 

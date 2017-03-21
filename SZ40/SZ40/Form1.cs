@@ -46,8 +46,9 @@ namespace SZ40
                     
                     foreach (NumericUpDown numericUpDown in numericUpDownArr)
                     {
-                        numericUpDown.ReadOnly = true;
+                        numericUpDown.Enabled = true;
                         textBox2.Text += numericUpDown.Value.ToString();
+                        textBox2.Text += ' ';
                     }
                 }
 
@@ -99,10 +100,15 @@ namespace SZ40
             if (path == "")
                 return;
 
-            using (StreamReader sr = new StreamReader(path)) // Считывает ключ
+            using (StreamReader sr = new StreamReader(path)) 
             {
-                maskedTextBox1.Text = sr.ReadLine();
+                maskedTextBox1.Text = sr.ReadLine();    // Считывает долговременный ключ
                 //maskedTextBox2.Text = sr.ReadLine();
+
+                StartRotatesPosition startRotatesPosition = new StartRotatesPosition(sr.ReadLine());
+                int[] startPositions = startRotatesPosition.GetStartPositions();
+                for (int i = 0; i < 12; ++i)
+                    numericUpDownArr[i].Value = startPositions[i];
 
                 while (sr.Peek() >= 0)
                     textBox1.Text += sr.ReadLine() + " ";
@@ -126,7 +132,14 @@ namespace SZ40
             if (path == "")
                 return;
 
-            string[] lines = { maskedTextBox1.Text, /*maskedTextBox2.Text,*/ textBox1.Text }; // Масив содержимого maskedTextBox1 maskedTextBox2 и textBox1
+            StringBuilder startPosition = new StringBuilder();
+            foreach (NumericUpDown numericUpDown in numericUpDownArr)
+            {                
+                startPosition.Append(numericUpDown.Value.ToString());
+                startPosition.Append(" ");
+            }
+
+            string[] lines = { maskedTextBox1.Text, startPosition.ToString(), textBox1.Text }; // Масив содержимого maskedTextBox1 NumericUpDown[] и textBox1
 
             File.WriteAllLines(path, lines);  // Записывает в файл.
         }
@@ -145,7 +158,7 @@ namespace SZ40
         {
             maskedTextBox1.ReadOnly = false;
             foreach (NumericUpDown numericUpDown in numericUpDownArr)
-                numericUpDown.ReadOnly = false;
+                numericUpDown.Enabled = false;
 
             textBox1.Text = "";
             textBox2.Text = "";
