@@ -30,10 +30,17 @@ namespace SZ40
         /// А так только по нажатию клавиши.
         /// </summary>
         private void textBox1_TextChanged(object sender, EventArgs e)
-        {        
+        {
             if (isKeyDown)
             {
                 isKeyDown = false;
+
+                if (maskedTextBox1.Text.Length != 5)
+                {
+                    MessageBox.Show("Не верный долговременный ключ", "Ошибка!");
+                    textBox1.Text = "";
+                    return;
+                }
 
                 // Ввод символа в телетайп.
                 for (int i = this.countSymbols; i < this.textBox1.Text.Length; ++i)
@@ -46,14 +53,14 @@ namespace SZ40
 
                 // Блокировка ключей, вывод идентификатора в textBox2.
                 if (textBox1.Text.Length == 1)
-                {
+                {       
                     maskedTextBox1.ReadOnly = true;
 
                     foreach (NumericUpDown numericUpDown in numericUpDownArr)
                     {
                         numericUpDown.Enabled = false;
-                        textBox2.Text += numericUpDown.Value.ToString();
-                        textBox2.Text += ' ';
+                        //textBox2.Text += numericUpDown.Value.ToString();
+                        //textBox2.Text += ' ';
                     }
                 }
                 //textBox2.Text = teletype.GetText();
@@ -92,8 +99,7 @@ namespace SZ40
             using (StreamReader sr = new StreamReader(path)) 
             {
                 maskedTextBox1.Text = sr.ReadLine();    // Считывает долговременный ключ
-                //maskedTextBox2.Text = sr.ReadLine();
-
+                
                 StartRotatesPosition startRotatesPosition = new StartRotatesPosition(sr.ReadLine());
                 int[] startPositions = startRotatesPosition.GetStartPositions();
                 for (int i = 0; i < 12; ++i)
@@ -102,56 +108,6 @@ namespace SZ40
                 while (sr.Peek() >= 0)
                     textBox1.Text += sr.ReadLine() + " ";
             }
-        }
-
-
-        /// <summary>
-        /// Save button.
-        /// Сохраняет долговременный ключ, сдвиги и текст из textBox1 в файл.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void button1_Click(object sender, EventArgs e)
-        {
-            SaveFileDialog saveFileDialog = new SaveFileDialog();
-            saveFileDialog.DefaultExt = ".txt"; // Расширение по умолчанию
-            saveFileDialog.ShowDialog(); // Открывает диалоговое окно
-
-            string path = saveFileDialog.FileName; // Сохраняет путь выбранного файла            
-            if (path == "")
-                return;
-
-            StringBuilder startPosition = new StringBuilder();
-            foreach (NumericUpDown numericUpDown in numericUpDownArr)
-            {                
-                startPosition.Append(numericUpDown.Value.ToString());
-                startPosition.Append(" ");
-            }
-
-            string[] lines = { maskedTextBox1.Text, startPosition.ToString(), textBox1.Text }; // Масив содержимого maskedTextBox1 NumericUpDown[] и textBox1
-
-            File.WriteAllLines(path, lines);  // Записывает в файл.
-        }
-
-        private void label1_Click(object sender, EventArgs e)
-        {
-
-        }
-        
-        /// <summary>
-        /// Reset button
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void resetToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            maskedTextBox1.ReadOnly = false;
-            foreach (NumericUpDown numericUpDown in numericUpDownArr)
-                numericUpDown.Enabled = true;
-
-            textBox1.Text = "";
-            textBox2.Text = "";
-            teletype = new Teletype();
         }
 
         /// <summary>
@@ -175,6 +131,97 @@ namespace SZ40
             }
         }
 
+
+        /// <summary>
+        /// Save button_1.
+        /// Сохраняет долговременный ключ, сдвиги и текст из textBox1 в файл.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void saveButton1_Click(object sender, EventArgs e)
+        {
+            SaveFromTextBoxToFile(textBox1);
+        }
+
+        /// <summary>
+        /// Save button_2.
+        /// Сохраняет долговременный ключ, сдвиги и текст из textBox2 в файл.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void saveButton2_Click(object sender, EventArgs e)
+        {
+            SaveFromTextBoxToFile(textBox2);
+        }
+
+        /// <summary>
+        /// Save button.
+        /// Сохраняет долговременный ключ, сдвиги и текст из textBox в файл.
+        /// </summary>
+        /// <param name="textBox">ТексБокс содержимое которого сохраняем</param>        
+        private void SaveFromTextBoxToFile(TextBox textBox)
+        {
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.DefaultExt = ".txt"; // Расширение по умолчанию
+            saveFileDialog.ShowDialog(); // Открывает диалоговое окно
+
+            string path = saveFileDialog.FileName; // Сохраняет путь выбранного файла            
+            if (path == "")
+                return;
+
+            StringBuilder startPosition = new StringBuilder();
+            foreach (NumericUpDown numericUpDown in numericUpDownArr)
+            {
+                startPosition.Append(numericUpDown.Value.ToString());
+                startPosition.Append(" ");
+            }
+
+            // Масив содержимого maskedTextBox1 NumericUpDown[] и textBox
+            string[] lines = { maskedTextBox1.Text, startPosition.ToString(), textBox.Text };
+
+            File.WriteAllLines(path, lines);  // Записывает в файл.
+        }
+
+        // MENU
+        /// <summary>
+        /// Reset button
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void resetToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Reset();
+        }
+
+        // Кнопка очищения форм (в меню)
+        private void clearToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Reset();
+
+            maskedTextBox1.Text = "";
+            foreach (NumericUpDown numericUpDown in numericUpDownArr)
+                numericUpDown.ResetText();
+        }
+
+        // Кнопка выхода (в меню)
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
+        }
+
+        /// <summary>
+        /// делает доступными все поля формы.
+        /// </summary>
+        private void Reset()
+        {
+            maskedTextBox1.ReadOnly = false;
+            foreach (NumericUpDown numericUpDown in numericUpDownArr)
+                numericUpDown.Enabled = true;
+
+            textBox1.Text = "";
+            textBox2.Text = "";
+            teletype = new Teletype();
+        }
     }
 
 }
