@@ -18,16 +18,16 @@ namespace SZ40
 
         public int[] GetStartPositions()
         {
-            int[] result = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+            int[] result = new int[12];
             int index = 0;
             StringBuilder str = new StringBuilder(_str);
             StringBuilder temp = new StringBuilder("");
 
-            for (int i = 0; i < str.Length - 1; ++i)
+            for (int i = 0; i < str.Length; ++i)
             {
                 if (str[i] == ' ')
                 {
-                    result[++index] = Convert.ToInt32(temp.ToString());
+                    result[index++] = Convert.ToInt32(temp.ToString());
                     temp.Clear();
                 }
                 else

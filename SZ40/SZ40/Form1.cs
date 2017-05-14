@@ -2,27 +2,32 @@
 using System.Windows.Forms;
 using System.IO;
 using System.Text;
+using System.Collections.Generic;
 
 namespace SZ40
 {
-    public partial class Form1 : Form
+    public partial class SZ40 : Form
     {
-        public Form1()
+        public SZ40()
         {
             InitializeComponent();
 
             numericUpDownArr = new NumericUpDown[] {
             numericUpDown1, numericUpDown2, numericUpDown3, numericUpDown4, numericUpDown5, numericUpDown6,
-            numericUpDown7, numericUpDown8, numericUpDown9, numericUpDown10, numericUpDown11, numericUpDown12, };
+            numericUpDown7, numericUpDown8, numericUpDown9, numericUpDown10, numericUpDown11, numericUpDown12, };            
         }
 
         private bool isKeyDown;
 
         private int countSymbols = 0;
 
-        private Teletype teletype = new Teletype();
+        private bool isFirstChange = true;  // чтобы знать когда создавать нужные объекты (которые ниже), считывать из файла и прочее.
+
+        private Teletype teletype;
 
         private NumericUpDown[] numericUpDownArr;
+
+        private Rotors.Mashine mashine;       
         
         /// <summary>
         /// Этот метод берет последний символ из текст бокса и подает его на телетайп.
@@ -42,6 +47,39 @@ namespace SZ40
                     return;
                 }
 
+                // Блокировка ключей, вывод идентификатора в textBox2, создаем телетайп, машину
+                if (isFirstChange)
+                {
+                    isFirstChange = false;
+
+                    teletype = new Teletype();
+
+                    string path = "../../../Files/KEYS/";
+
+                    maskedTextBox1.ReadOnly = true;
+
+                    int[] startPos = new int[12];
+                    int j = 0;
+                    foreach (NumericUpDown numericUpDown in numericUpDownArr)
+                    {
+                        numericUpDown.Enabled = false;
+
+                        startPos[j] = (int)numericUpDown.Value;
+                        ++j;
+                    }
+                    
+                    try
+                    {
+                        mashine = new Rotors.Mashine(path, maskedTextBox1.Text, startPos);
+                    }
+                    catch (FileNotFoundException)
+                    {
+                        MessageBox.Show("Долговременный ключ с таким номером отсутствует", "Ошибка!");
+                        Reset();
+                        return;
+                    }
+                }
+
                 // Ввод символа в телетайп.
                 for (int i = this.countSymbols; i < this.textBox1.Text.Length; ++i)
                 {
@@ -50,20 +88,12 @@ namespace SZ40
 
                 // Присваиваем строку из телетайпа в текст бокс.
                 textBox1.Text = teletype.GetText();
-
-                // Блокировка ключей, вывод идентификатора в textBox2.
-                if (textBox1.Text.Length == 1)
-                {       
-                    maskedTextBox1.ReadOnly = true;
-
-                    foreach (NumericUpDown numericUpDown in numericUpDownArr)
-                    {
-                        numericUpDown.Enabled = false;
-                        //textBox2.Text += numericUpDown.Value.ToString();
-                        //textBox2.Text += ' ';
-                    }
+                
+                // Ввод символа в textBox2.
+                for (int i = this.countSymbols; i < this.textBox1.Text.Length; ++i)
+                {
+                    textBox2.Text += mashine.GetNextSymbol(textBox1.Text[i]).ToString();
                 }
-                //textBox2.Text = teletype.GetText();
 
                 // Установка курсора в конец.
                 textBox1.Select(textBox1.Text.Length, 0);
@@ -126,7 +156,7 @@ namespace SZ40
             foreach (NumericUpDown numericUpDown in numericUpDownArr)
             {
                 int max = Convert.ToInt32(numericUpDown.Maximum);
-                decimal number = Convert.ToDecimal(random.Next(max));
+                decimal number = Convert.ToDecimal(random.Next(1, max));
                 numericUpDown.Value = number;
             }
         }
@@ -183,11 +213,8 @@ namespace SZ40
         }
 
         // MENU
-        /// <summary>
-        /// Reset button
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        
+        /// Кнопка "сбросить"
         private void resetToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Reset();
@@ -200,7 +227,7 @@ namespace SZ40
 
             maskedTextBox1.Text = "";
             foreach (NumericUpDown numericUpDown in numericUpDownArr)
-                numericUpDown.ResetText();
+                numericUpDown.Value = 1;
         }
 
         // Кнопка выхода (в меню)
@@ -214,6 +241,7 @@ namespace SZ40
         /// </summary>
         private void Reset()
         {
+            isFirstChange = true;
             maskedTextBox1.ReadOnly = false;
             foreach (NumericUpDown numericUpDown in numericUpDownArr)
                 numericUpDown.Enabled = true;
