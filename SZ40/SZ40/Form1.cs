@@ -54,7 +54,7 @@ namespace SZ40
                 {
                     isFirstChange = false;
 
-                    string path = "../../../Files/KEYS/";
+                    string path = "./KEYS/";
 
                     maskedTextBox1.ReadOnly = true;
 					//checkBox1.ReadOnly = true;
