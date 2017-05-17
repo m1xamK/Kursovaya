@@ -25,6 +25,14 @@ namespace SZ40
 
             for (int i = 0; i < str.Length; ++i)
             {
+                if (i == str.Length - 1)
+                {
+                    temp.Append(str[i]);
+                    result[index++] = Convert.ToInt32(temp.ToString());
+
+                    return result;
+                }                    
+
                 if (str[i] == ' ')
                 {
                     result[index++] = Convert.ToInt32(temp.ToString());

@@ -14,7 +14,9 @@ namespace SZ40
 
             numericUpDownArr = new NumericUpDown[] {
             numericUpDown1, numericUpDown2, numericUpDown3, numericUpDown4, numericUpDown5, numericUpDown6,
-            numericUpDown7, numericUpDown8, numericUpDown9, numericUpDown10, numericUpDown11, numericUpDown12, };            
+            numericUpDown7, numericUpDown8, numericUpDown9, numericUpDown10, numericUpDown11, numericUpDown12, };
+
+            teletype = new Teletype();
         }
 
         private bool isKeyDown;
@@ -52,11 +54,10 @@ namespace SZ40
                 {
                     isFirstChange = false;
 
-                    teletype = new Teletype();
-
                     string path = "../../../Files/KEYS/";
 
                     maskedTextBox1.ReadOnly = true;
+					//checkBox1.ReadOnly = true;
 
                     int[] startPos = new int[12];
                     int j = 0;
@@ -80,19 +81,29 @@ namespace SZ40
                     }
                 }
 
-                // Ввод символа в телетайп.
-                for (int i = this.countSymbols; i < this.textBox1.Text.Length; ++i)
-                {
-                    teletype.Input(textBox1.Text[i]); 
-                }
+				if (!checkBox1.Checked)				
+				{
+					// Ввод символа в телетайп.
+					for (int i = this.countSymbols; i < this.textBox1.Text.Length; ++i)
+					{
+                        if (textBox1.Text[i] == ' ') // пропускаем пробелы
+                            continue;
 
-                // Присваиваем строку из телетайпа в текст бокс.
-                textBox1.Text = teletype.GetText();
-                
+						teletype.Input(textBox1.Text[i]);
+					}
+
+					// Присваиваем строку из телетайпа в текст бокс.
+					textBox1.Text = teletype.GetText();
+				}
+                                
                 // Ввод символа в textBox2.
                 for (int i = this.countSymbols; i < this.textBox1.Text.Length; ++i)
                 {
-                    textBox2.Text += mashine.GetNextSymbol(textBox1.Text[i]).ToString();
+                    if (textBox1.Text[i] == ' ')
+                        continue;
+
+					var ch = mashine.GetNextSymbol(textBox1.Text[i]).ToString();
+					textBox2.Text += ch;
                 }
 
                 // Установка курсора в конец.
@@ -124,7 +135,7 @@ namespace SZ40
 
             string path = openFileDialog.FileName; // Сохраняет путь выбранного файла
             if (path == "")
-                return;
+                return;            
 
             using (StreamReader sr = new StreamReader(path)) 
             {
@@ -132,12 +143,16 @@ namespace SZ40
                 
                 StartRotatesPosition startRotatesPosition = new StartRotatesPosition(sr.ReadLine());
                 int[] startPositions = startRotatesPosition.GetStartPositions();
-                for (int i = 0; i < 12; ++i)
+                for (int i = 0; i < 12; i++)
                     numericUpDownArr[i].Value = startPositions[i];
 
                 while (sr.Peek() >= 0)
-                    textBox1.Text += sr.ReadLine() + " ";
-            }
+                    textBox1.Text += sr.ReadLine();
+                                
+                // чтобы сразу началось шифроваться
+                isKeyDown = true;
+                textBox1_TextChanged(textBox1, e);                
+            }            
         }
 
         /// <summary>
@@ -246,10 +261,18 @@ namespace SZ40
             foreach (NumericUpDown numericUpDown in numericUpDownArr)
                 numericUpDown.Enabled = true;
 
-            textBox1.Text = "";
+            textBox1.Text = "";            
             textBox2.Text = "";
+
+            countSymbols = 0;
             teletype = new Teletype();
         }
+
+		private void button3_Click(object sender, EventArgs e)
+		{
+			string str = Translator.Translit.GetTranslit(textBox2.Text);
+			MessageBox.Show(str, "Переведенный текст");
+		}
     }
 
 }
