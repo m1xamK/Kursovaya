@@ -23,8 +23,6 @@ namespace SZ40
 
         private int countSymbols = 0;
 
-        private bool isFirstChange = true;  // чтобы знать когда создавать нужные объекты (которые ниже), считывать из файла и прочее.
-
         private Teletype teletype;
 
         private NumericUpDown[] numericUpDownArr;
@@ -50,14 +48,11 @@ namespace SZ40
                 }
 
                 // Блокировка ключей, вывод идентификатора в textBox2, создаем телетайп, машину
-                if (isFirstChange)
+                if (countSymbols == 0)
                 {
-                    isFirstChange = false;
-
                     string path = "./KEYS/";
 
                     maskedTextBox1.ReadOnly = true;
-					//checkBox1.ReadOnly = true;
 
                     int[] startPos = new int[12];
                     int j = 0;
@@ -89,7 +84,7 @@ namespace SZ40
                         if (textBox1.Text[i] == ' ') // пропускаем пробелы
                             continue;
 
-						teletype.Input(textBox1.Text[i]);
+                        teletype.Input(textBox1.Text[i]);
 					}
 
 					// Присваиваем строку из телетайпа в текст бокс.
@@ -101,9 +96,16 @@ namespace SZ40
                 {
                     if (textBox1.Text[i] == ' ')
                         continue;
-
-					var ch = mashine.GetNextSymbol(textBox1.Text[i]).ToString();
-					textBox2.Text += ch;
+                    
+                    try
+                    {
+                        var ch = mashine.GetNextSymbol(textBox1.Text[i]).ToString();
+                        textBox2.Text += ch;
+                    }
+                    catch
+                    {
+                        MessageBox.Show("Неверный символ", "Ошибка!");
+                    }
                 }
 
                 // Установка курсора в конец.
@@ -149,7 +151,7 @@ namespace SZ40
                 while (sr.Peek() >= 0)
                     textBox1.Text += sr.ReadLine();
                                 
-                // чтобы сразу началось шифроваться
+                // чтобы сразу началось шифрование
                 isKeyDown = true;
                 textBox1_TextChanged(textBox1, e);                
             }            
@@ -255,8 +257,7 @@ namespace SZ40
         /// делает доступными все поля формы.
         /// </summary>
         private void Reset()
-        {
-            isFirstChange = true;
+        {            
             maskedTextBox1.ReadOnly = false;
             foreach (NumericUpDown numericUpDown in numericUpDownArr)
                 numericUpDown.Enabled = true;

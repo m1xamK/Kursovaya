@@ -1,0 +1,9 @@
+C:\Users\Lenin1\Desktop\Kursovaya\SZ40\Rotors\bin\Release\Rotors.dll
+C:\Users\Lenin1\Desktop\Kursovaya\SZ40\Rotors\bin\Release\Rotors.pdb
+C:\Users\Lenin1\Desktop\Kursovaya\SZ40\Rotors\obj\Release\Rotors.dll
+C:\Users\Lenin1\Desktop\Kursovaya\SZ40\Rotors\obj\Release\Rotors.pdb
+C:\Users\Mikhail\Documents\Visual Studio 2013\Projects\Kursovaya\Kursovaya\SZ40\Rotors\bin\Release\Rotors.dll
+C:\Users\Mikhail\Documents\Visual Studio 2013\Projects\Kursovaya\Kursovaya\SZ40\Rotors\bin\Release\Rotors.pdb
+C:\Users\Mikhail\Documents\Visual Studio 2013\Projects\Kursovaya\Kursovaya\SZ40\Rotors\obj\Release\Rotors.csprojResolveAssemblyReference.cache
+C:\Users\Mikhail\Documents\Visual Studio 2013\Projects\Kursovaya\Kursovaya\SZ40\Rotors\obj\Release\Rotors.dll
+C:\Users\Mikhail\Documents\Visual Studio 2013\Projects\Kursovaya\Kursovaya\SZ40\Rotors\obj\Release\Rotors.pdb

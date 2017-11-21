@@ -1,0 +1,5 @@
+C:\Users\Lenin1\Desktop\Kursovaya\SZ40\Rotors\obj\Debug\Rotors.csprojResolveAssemblyReference.cache
+C:\Users\Lenin1\Desktop\Kursovaya\SZ40\Rotors\bin\Debug\Rotors.dll
+C:\Users\Lenin1\Desktop\Kursovaya\SZ40\Rotors\bin\Debug\Rotors.pdb
+C:\Users\Lenin1\Desktop\Kursovaya\SZ40\Rotors\obj\Debug\Rotors.dll
+C:\Users\Lenin1\Desktop\Kursovaya\SZ40\Rotors\obj\Debug\Rotors.pdb

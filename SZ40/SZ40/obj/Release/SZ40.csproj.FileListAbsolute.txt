@@ -1,0 +1,33 @@
+C:\Users\Lenin1\Desktop\Kursovaya\SZ40\SZ40\bin\Release\SZ40.exe.config
+C:\Users\Lenin1\Desktop\Kursovaya\SZ40\SZ40\bin\Release\SZ40.exe
+C:\Users\Lenin1\Desktop\Kursovaya\SZ40\SZ40\bin\Release\SZ40.pdb
+C:\Users\Lenin1\Desktop\Kursovaya\SZ40\SZ40\bin\Release\Rotors.dll
+C:\Users\Lenin1\Desktop\Kursovaya\SZ40\SZ40\bin\Release\Rotors.pdb
+C:\Users\Lenin1\Desktop\Kursovaya\SZ40\SZ40\obj\Release\SZ40.csprojResolveAssemblyReference.cache
+C:\Users\Lenin1\Desktop\Kursovaya\SZ40\SZ40\obj\Release\SZ40.SZ40.resources
+C:\Users\Lenin1\Desktop\Kursovaya\SZ40\SZ40\obj\Release\SZ40.Properties.Resources.resources
+C:\Users\Lenin1\Desktop\Kursovaya\SZ40\SZ40\obj\Release\SZ40.csproj.GenerateResource.Cache
+C:\Users\Lenin1\Desktop\Kursovaya\SZ40\SZ40\obj\Release\SZ40.exe
+C:\Users\Lenin1\Desktop\Kursovaya\SZ40\SZ40\obj\Release\SZ40.pdb
+C:\Users\Lenin1\Desktop\Kursovaya1\SZ40\SZ40\bin\Release\SZ40.exe.config
+C:\Users\Lenin1\Desktop\Kursovaya1\SZ40\SZ40\obj\Release\SZ40.exe
+C:\Users\Lenin1\Desktop\Kursovaya1\SZ40\SZ40\obj\Release\SZ40.pdb
+C:\Users\Lenin1\Desktop\Kursovaya1\SZ40\SZ40\bin\Release\SZ40.exe
+C:\Users\Lenin1\Desktop\Kursovaya1\SZ40\SZ40\bin\Release\SZ40.pdb
+C:\Users\Lenin1\Desktop\Kursovaya1\SZ40\SZ40\bin\Release\Rotors.dll
+C:\Users\Lenin1\Desktop\Kursovaya1\SZ40\SZ40\bin\Release\Rotors.pdb
+C:\Users\Lenin1\Desktop\Kursovaya1\SZ40\SZ40\obj\Release\SZ40.csprojResolveAssemblyReference.cache
+C:\Users\Lenin1\Desktop\Kursovaya1\SZ40\SZ40\obj\Release\SZ40.SZ40.resources
+C:\Users\Lenin1\Desktop\Kursovaya1\SZ40\SZ40\obj\Release\SZ40.Properties.Resources.resources
+C:\Users\Lenin1\Desktop\Kursovaya1\SZ40\SZ40\obj\Release\SZ40.csproj.GenerateResource.Cache
+C:\Users\Mikhail\Documents\Visual Studio 2013\Projects\Kursovaya\Kursovaya\SZ40\SZ40\bin\Release\SZ40.exe.config
+C:\Users\Mikhail\Documents\Visual Studio 2013\Projects\Kursovaya\Kursovaya\SZ40\SZ40\obj\Release\SZ40.exe
+C:\Users\Mikhail\Documents\Visual Studio 2013\Projects\Kursovaya\Kursovaya\SZ40\SZ40\obj\Release\SZ40.pdb
+C:\Users\Mikhail\Documents\Visual Studio 2013\Projects\Kursovaya\Kursovaya\SZ40\SZ40\bin\Release\SZ40.exe
+C:\Users\Mikhail\Documents\Visual Studio 2013\Projects\Kursovaya\Kursovaya\SZ40\SZ40\bin\Release\SZ40.pdb
+C:\Users\Mikhail\Documents\Visual Studio 2013\Projects\Kursovaya\Kursovaya\SZ40\SZ40\bin\Release\Rotors.dll
+C:\Users\Mikhail\Documents\Visual Studio 2013\Projects\Kursovaya\Kursovaya\SZ40\SZ40\bin\Release\Rotors.pdb
+C:\Users\Mikhail\Documents\Visual Studio 2013\Projects\Kursovaya\Kursovaya\SZ40\SZ40\obj\Release\SZ40.csprojResolveAssemblyReference.cache
+C:\Users\Mikhail\Documents\Visual Studio 2013\Projects\Kursovaya\Kursovaya\SZ40\SZ40\obj\Release\SZ40.SZ40.resources
+C:\Users\Mikhail\Documents\Visual Studio 2013\Projects\Kursovaya\Kursovaya\SZ40\SZ40\obj\Release\SZ40.Properties.Resources.resources
+C:\Users\Mikhail\Documents\Visual Studio 2013\Projects\Kursovaya\Kursovaya\SZ40\SZ40\obj\Release\SZ40.csproj.GenerateResource.Cache
