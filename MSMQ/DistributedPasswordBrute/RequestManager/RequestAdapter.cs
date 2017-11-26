@@ -5,7 +5,7 @@ using Message = System.Messaging.Message;
 
 namespace RequestManager
 {
-    class RequestorAdapter
+    public class RequestorAdapter
     {
         private MessageQueue _requestQueue;
         private MessageQueue _replyQueue;
