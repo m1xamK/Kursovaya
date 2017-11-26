@@ -11,7 +11,12 @@ namespace Manager
 			_sender = new RequestorAdapter(requestResurce, replayResurse);
 		}
 
-		string GetRange()
+		void Send(string start, int count, string[] hash)
+		{
+			_sender.Send(start, count, hash);
+		}
+
+		string GetRange(string startNumber)
 		{
 			
 		}
