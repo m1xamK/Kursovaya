@@ -18,7 +18,7 @@ namespace Manager
 
 		string GetRange(string startNumber)
 		{
-			
+			//
 		}
     }
 }
