@@ -5,7 +5,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 
-namespace Let21
+namespace Agent
 {
     public static class Agent
     {

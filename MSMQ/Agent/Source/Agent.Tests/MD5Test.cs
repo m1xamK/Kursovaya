@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Let21.Tests
+namespace Agent.Tests
 {
     using NUnit.Framework;
     [TestFixture]

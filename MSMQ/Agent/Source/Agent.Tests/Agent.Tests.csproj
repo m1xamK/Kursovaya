@@ -41,9 +41,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Let21\Let21.csproj">
+    <ProjectReference Include="..\Let21\Agent.csproj">
       <Project>{c2371a66-8ae5-41eb-90d5-3487e69c2740}</Project>
-      <Name>Let21</Name>
+      <Name>Agent</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
