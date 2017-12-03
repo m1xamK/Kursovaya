@@ -48,10 +48,6 @@
       <Project>{cc354fed-b083-4234-b9b6-95c5375af8cb}</Project>
       <Name>Agent</Name>
     </ProjectReference>
-    <ProjectReference Include="..\RequestManager\RequestManager.csproj">
-      <Project>{f48ea519-31bf-45db-8443-a820ffc984d7}</Project>
-      <Name>RequestManager</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -1,16 +1,16 @@
 ﻿using System;
-using System.Text;
 using System.Messaging;
+using System.Text;
 using Message = System.Messaging.Message;
 
-namespace RequestManager
+namespace MsmqAdapters
 {
-    public class RequestorAdapter
+    public class MsmqRequestorAdapter
     {
         private MessageQueue _requestQueue;
         private MessageQueue _replyQueue;
 
-        public RequestorAdapter(string requestQueueName, string replyQueueName)
+        public MsmqRequestorAdapter(string requestQueueName, string replyQueueName)
         {
             _requestQueue = new MessageQueue(requestQueueName);
             _replyQueue = new MessageQueue(replyQueueName);

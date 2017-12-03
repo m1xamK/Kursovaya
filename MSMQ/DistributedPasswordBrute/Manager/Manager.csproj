@@ -39,9 +39,9 @@
     <Compile Include="ScaleOfNotation.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\RequestManager\RequestManager.csproj">
-      <Project>{f48ea519-31bf-45db-8443-a820ffc984d7}</Project>
-      <Name>RequestManager</Name>
+    <ProjectReference Include="..\MsmqAdapters\MsmqAdapters.csproj">
+      <Project>{254dff87-a576-4b82-83b9-d335c098e2f7}</Project>
+      <Name>MsmqAdapters</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

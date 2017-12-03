@@ -1,4 +1,4 @@
-﻿using RequestManager;
+﻿using MsmqAdapters;
 
 namespace Manager
 {
@@ -10,16 +10,16 @@ namespace Manager
 		/// <summary>
 		/// некий механизм осуществляющий передачу сообщений до агента
 		/// </summary>
-		private RequestorAdapter _sender;
+		private MsmqRequestorAdapter _sender;
 
 		/// <summary>
 		/// указываем пути до ресурсов обмена
 		/// </summary>
-		/// <param name="requestResurce"></param>
-		/// <param name="replayResurse"></param>
-		Manager(string requestResurce, string replayResurse)
+        /// <param name="requestResource"></param>
+        /// <param name="replayResourse"></param>
+        Manager(string requestResource, string replayResourse)
 		{
-			_sender = new RequestorAdapter(requestResurce, replayResurse);
+            _sender = new MsmqRequestorAdapter(requestResource, replayResourse);
 		}
 
 		//не ну а чо тут непонятно?????
