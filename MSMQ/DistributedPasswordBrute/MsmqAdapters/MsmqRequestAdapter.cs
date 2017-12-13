@@ -6,8 +6,8 @@ namespace MsmqAdapters
 {
     public class MsmqRequestorAdapter
     {
-        private MessageQueue _requestQueue;
-        private MessageQueue _replyQueue;
+        private readonly MessageQueue _requestQueue;
+        private readonly MessageQueue _replyQueue;
 
         public MsmqRequestorAdapter(string requestQueueName, string replyQueueName)
         {
@@ -24,24 +24,24 @@ namespace MsmqAdapters
         /// <param name="start"></param>
         /// <param name="count"></param>
         /// <param name="hashSumArr"></param>
-        public string Send(string msgId, string start, int count, string[] hashSumArr)
+        public string Send(string start, int count, string[] hashSumArr)
         {
             Message requestMessage = new Message();
-            StringBuilder msgBody = new StringBuilder(msgId + " " + start + " " + count.ToString());
+            StringBuilder msgBody = new StringBuilder(start + " " + count.ToString());
             foreach (var hash in hashSumArr)
             {
                 msgBody.Append(' ');
                 msgBody.Append(hash);
             }
-
+            
             requestMessage.Body = msgBody;
             requestMessage.ResponseQueue = _replyQueue;
             _requestQueue.Send(requestMessage);
 
-            return "msg " + msgId + " send";
+            return requestMessage.Id;
         }
 
-        public string ReceiveSync()//поменял тут с void на string lenin
+        public string ReceiveSync() //поменял тут с void на string lenin
         {
             Message replyMessage = _replyQueue.Receive();
 
