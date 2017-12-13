@@ -1,11 +1,28 @@
-
 ﻿using System;
-using System.Security.Permissions;
+﻿using System.Collections.Generic;
+﻿using System.Linq;
 ﻿using MsmqAdapters;
-
 
 namespace Manager
 {
+	class MessageInProcess
+	{
+		private DateTime _time;
+		private KeyValuePair<int, int> _range;
+		private const int Overdude = 1000;
+
+		public MessageInProcess(long time, KeyValuePair<int, int> range)
+		{
+			_time = new DateTime(time);
+			_range = range;
+		}
+
+		bool IsValid()
+		{
+			return _time.Ticks - Overdude <= DateTime.Now.Ticks;
+		}
+	}
+
 	/// <summary>
 	/// класс осуществляющий равномерное распределение вычисления md5 праобраза 
 	/// </summary>
@@ -14,33 +31,27 @@ namespace Manager
 		/// <summary>
 		/// некий механизм осуществляющий передачу сообщений до агента
 		/// </summary>
-		public readonly MsmqRequestorAdapter _sender;
+		private readonly MsmqRequestorAdapter _sender;
 
-
+		private Dictionary<string, MessageInProcess> _agents;
+ 
 		//Наверное надо брать константы из файла конфига или как-то задавать, крч надо подумать а пока и так сойдет
 
 		//количетво бук в алфавите
 		public const int AlphabetSize = 60;
-		
 		//предполагаемое количестао символов в будующей подюорке
 		public const int QantityOfSymbols = 6;
-		private MsmqRequestorAdapter _sender;
 
 		/// <summary>
 		/// указываем пути до ресурсов обмена
 		/// </summary>
 		/// <param name="requestResurce"></param>
 		/// <param name="replayResurse"></param>
-		Manager(string requestResurce, string replayResurse)
+		public Manager(string requestResurce, string replayResurse)
 		{
+			//_requestResurce = requestResurce;
 			_sender = new MsmqRequestorAdapter(requestResurce, replayResurse);
-		}
-	
-        /// <param name="requestResource"></param>
-        /// <param name="replayResourse"></param>
-        Manager(string requestResource, string replayResourse)
-		{
-            _sender = new MsmqRequestorAdapter(requestResource, replayResourse);
+			_agents = new Dictionary<string, MessageInProcess>();
 		}
 
 		//не ну а чо тут непонятно?????
@@ -50,9 +61,14 @@ namespace Manager
 		/// <param name="start"> начальний сдвиг числа от которого пойдет перебор </param>
 		/// <param name="count"> сколько надо посчитать агенту строк после</param>
 		/// <param name="hash">праобразы md5 сверток</param>
-		void Send(string start, int count, string[] hash)
+		void Send(int start, int count, string[] hash)
 		{
-			_sender.Send(start, count, hash);
+			var msgId = DateTime.Now.Ticks;
+			var newMsg = new MessageInProcess(msgId, new KeyValuePair<int, int>(start, start + count);
+			
+			_agents.Add(msgId.ToString(), newMsg);
+
+			_sender.Send(msgId.ToString(), start.ToString(), count, hash);
 		}
 
 		/// <summary>
@@ -61,15 +77,24 @@ namespace Manager
 		/// </summary>
 		/// <param name="hash"></param>
 		/// <returns></returns>
-		private string FindHashs(string[] hash)
+		private string FindHashs(string[] hashs)
 		{
+			string result = "";
+
 			int count = (int)Math.Pow(AlphabetSize, QantityOfSymbols);
 			int step = 10000000;
 
 			for (int i = 1; i < count; i += step)
-				Send(i.ToString(), i + step, hash);
+			{
+				if (i + step >= count)
+					step = count - i;
 
-			return "Zaebca";
+				Send(i, i + step, hashs);
+
+				result = hashs.Aggregate(result, (current, hash) => current + ("Send msg for " + hash + " from " + i + " to " + i + step + "\n"));
+			}
+
+			return result;
 		}
 
 		public void ReciveSync()

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Messaging;
+﻿using System.Messaging;
 using System.Text;
 using Message = System.Messaging.Message;
 
@@ -19,10 +18,16 @@ namespace MsmqAdapters
             ((XmlMessageFormatter)_replyQueue.Formatter).TargetTypeNames = new string[] { "System.String,mscorlib" };
         }
 
-        public void Send(string start, int count, string[] hashSumArr)
+        /// <summary>
+        /// Отправляет сообщение
+        /// </summary>
+        /// <param name="start"></param>
+        /// <param name="count"></param>
+        /// <param name="hashSumArr"></param>
+        public string Send(string msgId, string start, int count, string[] hashSumArr)
         {
             Message requestMessage = new Message();
-            StringBuilder msgBody = new StringBuilder(start + " " + count.ToString());
+            StringBuilder msgBody = new StringBuilder(msgId + " " + start + " " + count.ToString());
             foreach (var hash in hashSumArr)
             {
                 msgBody.Append(' ');
@@ -33,12 +38,14 @@ namespace MsmqAdapters
             requestMessage.ResponseQueue = _replyQueue;
             _requestQueue.Send(requestMessage);
 
-            Console.WriteLine("msg send");
+            return "msg " + msgId + " send";
         }
 
-        public void ReceiveSync()
+        public string ReceiveSync()//поменял тут с void на string lenin
         {
             Message replyMessage = _replyQueue.Receive();
+
+			return null;
         }
     }
 }
