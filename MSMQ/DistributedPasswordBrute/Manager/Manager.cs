@@ -28,13 +28,6 @@ namespace Manager
 	/// </summary>
 	public class Manager
     {
-		/// <summary>
-		/// некий механизм осуществляющий передачу сообщений до агента
-		/// </summary>
-		private readonly MsmqRequestorAdapter _sender;
-
-		private Dictionary<string, MessageInProcess> _agents;
- 
 		//Наверное надо брать константы из файла конфига или как-то задавать, крч надо подумать а пока и так сойдет
 
 		//количетво бук в алфавите
@@ -43,18 +36,23 @@ namespace Manager
 		public const int QantityOfSymbols = 6;
 
 		/// <summary>
+		/// некий механизм осуществляющий передачу сообщений до агента
+		/// </summary>
+		private readonly MsmqRequestorAdapter _sender;
+
+		private readonly Dictionary<string, MessageInProcess> _agents;
+
+		/// <summary>
 		/// указываем пути до ресурсов обмена
 		/// </summary>
 		/// <param name="requestResurce"></param>
 		/// <param name="replayResurse"></param>
 		public Manager(string requestResurce, string replayResurse)
 		{
-			//_requestResurce = requestResurce;
 			_sender = new MsmqRequestorAdapter(requestResurce, replayResurse);
 			_agents = new Dictionary<string, MessageInProcess>();
 		}
 
-		//не ну а чо тут непонятно?????
 		/// <summary>
 		/// отправка сообщения агенту 
 		/// </summary>
