@@ -43,10 +43,6 @@
       <Project>{254dff87-a576-4b82-83b9-d335c098e2f7}</Project>
       <Name>MsmqAdapters</Name>
     </ProjectReference>
-    <ProjectReference Include="..\RequestManager\RequestManager.csproj">
-      <Project>{f48ea519-31bf-45db-8443-a820ffc984d7}</Project>
-      <Name>RequestManager</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

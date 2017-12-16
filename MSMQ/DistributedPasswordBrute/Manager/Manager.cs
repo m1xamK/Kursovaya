@@ -64,15 +64,15 @@ namespace Manager
 		void Send(int start, int count, string[] hash)
 		{
 			var msgId = DateTime.Now.Ticks;
-			var newMsg = new MessageInProcess(msgId, new KeyValuePair<int, int>(start, start + count);
+			var newMsg = new MessageInProcess(msgId, new KeyValuePair<int, int>(start, start + count));
 			
 			_agents.Add(msgId.ToString(), newMsg);
 
-			_sender.Send(msgId.ToString(), start.ToString(), count, hash);
+			_sender.Send(start.ToString(), count, hash);
 		}
 
 		/// <summary>
-		/// ну берем и считаем сколько должно получитья различных чисел в к ичной системе счисления 
+		/// ну берем и считаем сколько должно получиться различных чисел в к ичной системе счисления 
 		/// длинной QantityOfSymbols знаков, разбиваем на отдельные промежутки и отправлем в очередь
 		/// </summary>
 		/// <param name="hash"></param>

@@ -60,6 +60,7 @@ namespace MsmqAdapters
             str.AppendLine("Message Body:" + requestMessage.Body);
 
             return str.ToString();
+            return requestMessage.Id;
         }
 
         public string ReceiveSync()
