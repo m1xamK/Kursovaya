@@ -1,24 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Manager;
 using System.Threading;
 namespace ManagerRepresentor
 {
     class ManagerRepresentor
     {
 
-        private Manager.Manager _manager;
+        private readonly Manager.Manager _manager;
         private List<string> _hashList;
 
-        public ManagerRepresentor(string requestResurce, string replayResurse)
-		{
-			_manager = new Manager.Manager(requestResurce, replayResurse);
-		}
+        public ManagerRepresentor(string requestResource, string replyResourse)
+        {
+            _hashList = new List<string>();
+            _manager = new Manager.Manager(requestResource, replyResourse);
+        }
 
-       public  bool pushNewHash(string hash)
+        public  bool pushNewHash(string hash)
         {
             _hashList.Add(hash);
             return true;
@@ -36,7 +34,7 @@ namespace ManagerRepresentor
           _manager.FindHash(hashArr);
           _hashList.Clear();
            return true;
-       }
+           }
        }
        
 
@@ -45,19 +43,21 @@ namespace ManagerRepresentor
            Thread _logthread = new Thread(getLog);
            return true;
        }
-        static void getLog() 
-        {
-            string log;
-            while(!String.Equals(log, "end"))
+       public void getLog() 
+       {
+            string log = "";
+
+            while(!string.Equals(log, "end"))
             {
-                string lastLog = _manager.ResiveSync();
-                if(!String.Equals(lastLog, log))
+                string lastLog = _manager.ReciveSync();
+                if(!string.Equals(lastLog, log))
                 {
                     Console.WriteLine(lastLog);
                     log = lastLog;
                 }
+
                 Thread.Sleep(150);                   
             }
-        }
+       }
     }
     }

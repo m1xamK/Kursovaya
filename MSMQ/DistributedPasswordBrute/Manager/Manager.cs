@@ -75,7 +75,7 @@ namespace Manager
 		/// </summary>
 		/// <param name="hash"></param>
 		/// <returns></returns>
-		private string FindHashs(string[] hashs)
+		public string FindHash(string[] hashs)
 		{
 			string result = "";
 
@@ -95,9 +95,11 @@ namespace Manager
 			return result;
 		}
 
-		public void ReciveSync()
+		public string ReciveSync()  // changed by m1xamk void -> string
 		{
 			_sender.ReceiveSync();
+
+		    return "log";
 		}
 
     }

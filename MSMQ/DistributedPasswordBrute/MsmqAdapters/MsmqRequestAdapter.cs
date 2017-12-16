@@ -1,4 +1,5 @@
-﻿using System.Messaging;
+﻿using System;
+using System.Messaging;
 using System.Text;
 using Message = System.Messaging.Message;
 
@@ -49,34 +50,35 @@ namespace MsmqAdapters
             requestMessage.Body = msgBody;              // Задаем содержимое сообщения
             requestMessage.ResponseQueue = _replyQueue; // Задаем обратный адрес
 
+            // Задаем максимальное количество времени в течении которого сообщение должно быть получено из очереди
+            requestMessage.TimeToBeReceived = TimeSpan.FromMinutes(1);
+
             // Отправляем сообщение
             _requestQueue.Send(requestMessage);
 
             // для дебага
-            StringBuilder str = new StringBuilder();
-            str.AppendLine("Sent request message");
-            str.AppendLine("Message ID:" + requestMessage.Id);
-            str.AppendLine("Reply to:" + requestMessage.ResponseQueue.Path);
-            str.AppendLine("Message Body:" + requestMessage.Body);
-
-            return str.ToString();
+            Console.WriteLine("Sent request message");
+            Console.WriteLine("Message ID: {0}", requestMessage.Id);
+            Console.WriteLine("Reply to: {0}", requestMessage.ResponseQueue.Path);
+            Console.WriteLine("Message Body: {0}",requestMessage.Body);
+            
             return requestMessage.Id;
         }
 
-        public string ReceiveSync()
+        public Message ReceiveSync()
         {
             Message replyMessage = _replyQueue.Receive();
 
             if (replyMessage == null) 
                 return null;
+            
+            // для дебага
+            Console.WriteLine("Received reply");
+            Console.WriteLine("Message ID:" + replyMessage.Id);
+            Console.WriteLine("Message Correlation ID:" + replyMessage.CorrelationId);
+            Console.WriteLine("Message Body:" + replyMessage.Body);
 
-            StringBuilder info = new StringBuilder();
-            info.AppendLine("Received reply");
-            info.AppendLine("Message ID:" + replyMessage.Id);
-            info.AppendLine("Message Correlation ID:" + replyMessage.CorrelationId);
-            info.AppendLine("Message Body:" + replyMessage.Body);
-
-            return info.ToString();
+            return replyMessage;
         }
     }
 }
