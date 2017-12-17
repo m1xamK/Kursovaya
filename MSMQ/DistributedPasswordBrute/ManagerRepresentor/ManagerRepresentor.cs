@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
 namespace ManagerRepresentor
@@ -9,55 +10,73 @@ namespace ManagerRepresentor
 
         private readonly Manager.Manager _manager;
         private List<string> _hashList;
-
+        public bool _calcultationFlag;
+        /// <summary>
+        /// Конструктор класса ManagerRepresentor
+        /// </summary>
+        /// <param name="requestResource"></param>
+        /// <param name="replyResourse"></param>
         public ManagerRepresentor(string requestResource, string replyResourse)
         {
-            _hashList = new List<string>();
+            _hashList = new List<string>(); //инициализация перемееных
+            _calcultationFlag = false;
             _manager = new Manager.Manager(requestResource, replyResourse);
         }
-
-        public  bool pushNewHash(string hash)
+        /// <summary>
+        /// Добавляет новый хеш в List
+        /// </summary>
+        /// <param name="hash">md5 hash summ</param>
+        /// <returns></returns>
+        public bool pushNewHash(string hash)
         {
-            _hashList.Add(hash);
+            _hashList.Add(hash); //Добавление md5 в List
             return true;
         }
-       public bool startCalculation()
-       {
-           if (_hashList.Count == 0)
-           {
-               Console.WriteLine("biba");
-               return false;
-           }
-           else
-           {
-          string[] hashArr = _hashList.ToArray<string>();
-          _manager.FindHash(hashArr);
-          _hashList.Clear();
-           return true;
-           }
-       }
-       
+        /// <summary>
+        /// Инициализирует процесс вычисления пароля для List'а хеш сумм
+        /// </summary>
+        /// <returns></returns>
+        public bool startCalculation()
+        {
+            if (_hashList.Count == 0)
+            {
+                Console.WriteLine("Нет хеш сумм для проверки");
+                return false;
+            }
+            _calcultationFlag = true;//Установка флага произведения вычислений
+            _manager.FindHash(_hashList.ToArray<string>());//Инициализация вычислений
+            _hashList.Clear();//После окончания вычислений отчистка _hashList
+            return true;
+        }
 
-       public bool PrintResult()
-       {
-           Thread _logthread = new Thread(getLog);
-           return true;
-       }
-       public void getLog() 
-       {
+        /// <summary>
+        /// Функция отвечающая за вывод логов на экран в отдельном потоке
+        /// </summary>
+        /// <returns></returns>
+        public bool PrintResult()
+        {
+            Thread _logthread = new Thread(getLog);// Создание потока ввыводяшего результат
+            return true;
+        }
+        /// <summary>
+        /// Сама функция выводящая на экран
+        /// </summary>
+        public void getLog()
+        {
             string log = "";
-
-            while(!string.Equals(log, "end"))
+            StreamWriter logStreamWriter= new StreamWriter(@"../logs.txt", true);
+            while (!string.Equals(log, "end"))
             {
                 string lastLog = _manager.ReciveSync();
-                if(!string.Equals(lastLog, log))
-                {
+                if (!string.Equals(lastLog, log))
+                {   
                     Console.WriteLine(lastLog);
+                    logStreamWriter.WriteLine(lastLog);
                     log = lastLog;
                 }
 
-                Thread.Sleep(150);                   
+                Thread.Sleep(150);
             }
-       }
+        }
     }
-    }
+}

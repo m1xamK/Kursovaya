@@ -1,39 +1,51 @@
 ﻿using System;
 using System.Text.RegularExpressions;
+using System.IO;
 
 namespace ManagerRepresentor
 {
     class Program
     {
-            static void Main(string[] args, object exit)
+        static void Main()
+        {
+            string[] commandArr = { "" };   //Массив содержит команду и параметры, если такие имеются
+            Regex regex = new Regex("[0-9a-f]{32}"); //Регулярное выражение проверяющее hash сумму
+            ManagerRepresentor managerRepresentor = new ManagerRepresentor(".\\private$\\ReplyQueue", ".\\private$\\RequestQueue");
+            managerRepresentor.PrintResult();
+            while (true)
             {
-                string[] commandArr;
-                Regex regex = new Regex("[0-9a-f]{32}");
-                ManagerRepresentor ManagerRepresentor = new ManagerRepresentor(".\\private$\\ReplyQueue", ".\\private$\\RequestQueue");
-           
-                var command = Console.ReadLine();
-                while(!string.Equals(command, "exit"))
+                var command = Console.ReadLine();//Считывание команды с параметрами с консоли
+                if (command != null) commandArr = command.Split((string[]) null, StringSplitOptions.RemoveEmptyEntries);//Если command существует разбиваем по разделителю(пробелу)
+                switch (commandArr[0])
                 {
-                    if (string.Equals(command, "start"))
-                        ManagerRepresentor.startCalculation();
-                        commandArr = command.Split((string[]) null, StringSplitOptions.RemoveEmptyEntries);
-
-                    if (commandArr.Length == 2 && String.Equals(commandArr[0], "add_hash") && regex.IsMatch(commandArr[1]))
-                        ManagerRepresentor.pushNewHash(commandArr[1]);
+                    case ("exit"):
+                        return ;
+                    case ("start")://Инициализиция ычислений
+                        managerRepresentor.startCalculation();
+                        while (managerRepresentor._calcultationFlag)
+                        { 
+                            System.Threading.Thread.Sleep(300);//Приостанавливаем работу основного потока пока идут вычисления
+                        }
+                        break;
+                    case ("add_hash"): //Добавляет хеш сумму введенную в консоли(add_hash hash)
+                        if (commandArr.Length == 2 && regex.IsMatch(commandArr[1])) // Проверка валидности хеша
+                            managerRepresentor.pushNewHash(commandArr[1]);
+                        else
+                            Console.WriteLine("Не правильно введен hash");
+                        break;
+                    case ("add_hashfile")://Добавляет хеш суммы из файла(строки файла)
+                        if (commandArr.Length == 2 && File.Exists(commandArr[1]))//Проверка того, что файл существует
+                        {
+                            var hashFromFile = File.ReadAllLines(commandArr[1]); //Чтение файла построчно
+                            foreach (string hash in hashFromFile)
+                                if(regex.IsMatch(hash)) managerRepresentor.pushNewHash(hash); //Если строка md5, то добавляем в List managerRepresentor 
+                        }
+                        else
+                            Console.WriteLine("Не правильно введен путь к файлу с хешами");
+                        break;
                 }
 
-
-                while (true)
-                {
-                    var command = Console.ReadLine();
-
-                    switch (command)
-                    {
-                        case ("exit"):
-                            return ;
-                    }
-                    
-                }
+            }
         }
     }
 }
