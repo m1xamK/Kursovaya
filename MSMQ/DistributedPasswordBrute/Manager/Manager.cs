@@ -47,9 +47,9 @@ namespace Manager
 		/// </summary>
 		/// <param name="requestResurce"></param>
 		/// <param name="replayResurse"></param>
-		public Manager(string requestResurce, string replayResurse)
+        public Manager(string requestResource, string replyResourсe)
 		{
-			_sender = new MsmqRequestorAdapter(requestResurce, replayResurse);
+            _sender = new MsmqRequestorAdapter(requestResource, replyResourсe);
 			_agents = new Dictionary<string, MessageInProcess>();
 		}
 
