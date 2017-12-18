@@ -1,5 +1,10 @@
-﻿using System.Collections.Generic;
+﻿<<<<<<< .mine
+using System.Collections.Generic;
 using NUnit.Framework;
+=======
+/*using NUnit.Framework;
+
+>>>>>>> .theirs
 
 namespace Agent.Tests
 {
@@ -37,3 +42,4 @@ namespace Agent.Tests
         //}
     }
 }
+*/

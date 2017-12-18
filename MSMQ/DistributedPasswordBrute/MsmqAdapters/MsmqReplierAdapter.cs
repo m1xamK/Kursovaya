@@ -22,11 +22,13 @@ namespace MsmqAdapters
         public MsmqReplierAdapter(String requestQueueName, String invalidQueueName, Agent.Agent agent)
         {
             _agent = agent;
-            MessageQueue requestQueue = new MessageQueue(requestQueueName);
-            _invalidQueue = new MessageQueue(invalidQueueName);
+            
+            MessageQueue requestQueue = !MessageQueue.Exists(requestQueueName) ? MessageQueue.Create(requestQueueName) : new MessageQueue(requestQueueName);
+            
+            _invalidQueue = !MessageQueue.Exists(requestQueueName) ? MessageQueue.Create(invalidQueueName) : new MessageQueue(invalidQueueName);
 
             requestQueue.MessageReadPropertyFilter.SetAll();
-            ((XmlMessageFormatter)requestQueue.Formatter).TargetTypeNames = new string[]{"System.String,mscorlib"};
+            ((XmlMessageFormatter)requestQueue.Formatter).TargetTypeNames = new string[] { "System.String" };
 
             // Создаем экземпляр делегата ReceiveCompletedEventHandler
             // Система сообщений будет автоматически вызывать метод OnReceiveCompleted при поступлении нового сообщения в очередь
@@ -68,15 +70,21 @@ namespace MsmqAdapters
                 if (passwdList.Count != 0)
                 {
                     replyMessage.Extension = new byte[1];
-                    replyMessage.Body = passwdList;
+					Console.WriteLine("sucker!!!");
+					
+					replyMessage.Body = passwdList;
                 }
-                replyMessage.Body = "Is Empty";
+                else
+                {
+					replyMessage.Body = "Is Empty";
+                }
+
                 replyMessage.CorrelationId = requestMessage.Id;
 
                 // Отправляем сообщение
                 replyQueue.Send(replyMessage);
 
-                Console.WriteLine("Message sent");
+                Console.WriteLine("Message sent\n");
             }
             // Если пришел объект не типа Message или отсутствует обратный адрес, то попадаем сюда.
             catch (Exception)
@@ -90,7 +98,7 @@ namespace MsmqAdapters
 
                 _invalidQueue.Send(requestMessage);
 
-                Console.WriteLine("Message sent to invalid message queue");
+                Console.WriteLine("Message sent to invalid message queue\n");
             }
             // Снова переходим в режим ожидания.
             requestQueue.BeginReceive();

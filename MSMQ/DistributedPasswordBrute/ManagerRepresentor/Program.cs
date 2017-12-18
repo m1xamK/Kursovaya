@@ -9,8 +9,8 @@ namespace ManagerRepresentor
         static void Main()
         {
             string[] commandArr = { "" };   //Массив содержит команду и параметры, если такие имеются
-            Regex regex = new Regex("[0-9a-f]{32}"); //Регулярное выражение проверяющее hash сумму
-            ManagerRepresentor managerRepresentor = new ManagerRepresentor(".\\private$\\RequestQueue", ".\\private$\\ReplyQueue");
+            Regex regex = new Regex("[0-9a-z]{32}"); //Регулярное выражение проверяющее hash сумму
+            ManagerRepresentor managerRepresentor = new ManagerRepresentor(".\\Private$\\RequestQueue", ".\\Private$\\ReplyQueue");
             managerRepresentor.PrintResult();
             while (true)
             {
@@ -33,7 +33,7 @@ namespace ManagerRepresentor
                         else
                             Console.WriteLine("Не правильно введен hash");
                         break;
-                    case ("add_hashfile"):  //Добавляет хеш суммы из файла(строки файла)
+                    case ("a"):  //Добавляет хеш суммы из файла(строки файла)
                         if (commandArr.Length == 2 && File.Exists(commandArr[1]))   //Проверка того, что файл существует
                         {
                             var hashFromFile = File.ReadAllLines(commandArr[1]);    //Чтение файла построчно
