@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 
 namespace Agent
@@ -17,16 +18,29 @@ namespace Agent
             'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'
         };
 
+        //private readonly int AlphabetLen = Alphabet.;
+
         public List<KeyValuePair<string, string>> Calculate(string message)
         {
             // парсим сообщение.
             // todo
-            string from = message.Substring(0, 4);
-            string to = message.Substring(0, 4);
-            string[] hash = message.Split(' ');
+            //var regex = Regex("([0-9a-Z]+) ([0-9]+) (([0-9a-z]+) )+");
+            //string reg = "(?<start>[a-zA-Z0-9]+) (?<size>[0-9]+) (?<match>[a-z0-9]+[ ]*)+";
+
+            var messageInfo = message.Split(' ');
+            //MatchCollection messageInfo = Regex.Matches(message, reg);
+
+            string from = messageInfo[0];//message.Substring(0, 4);
+            int count = Convert.ToInt32(messageInfo[1]);
+
+            List<string> hashSumList = new List<string>();
+            for (int i = 2; i < messageInfo.Length; ++i)
+                hashSumList.Add(messageInfo[i]);
+
+            string to = FromNumToWord(FromWordToNum(from) + count);
 
             // находим совпадения.
-            return SearchPassword(from, to, hash);
+            return SearchPassword(from, to, hashSumList);
         }
 
         /*
@@ -35,17 +49,17 @@ namespace Agent
          * string to        -- конец поиска,  ДО такого-то слова
          * string[] hashSum_arr -- массив нужных нам сверток
          */
-        private List<KeyValuePair<string, string>> SearchPassword(string from, string to, string[] hashSumArr)
+        private List<KeyValuePair<string, string>> SearchPassword(string from, string to, List<string> hashSumList)
         {
-            List<KeyValuePair<string, string>> passwdList = new List<KeyValuePair<string, string>>(); // требуемые пароли
-            int numOfPasswd = hashSumArr.Length;
-            List<string> hashSumList = hashSumArr.ToList();
+            List<KeyValuePair<string, string>> passwdList =
+                new List<KeyValuePair<string, string>>(); // требуемые пароли
+            int numOfPasswd = hashSumList.Count;
 
             // если в лексикографическом порядке комбинация ОТ идет ДО комбинации после -- ошибка
             if (String.CompareOrdinal(from, to) > 0)
                 throw new Exception("From > to in lexicographic order!");
 
-            StringBuilder runner = new StringBuilder(from);      // строка для которой генерируется хеш в цикле
+            StringBuilder runner = new StringBuilder(from); // строка для которой генерируется хеш в цикле
             int beginSize = from.Length;
             char lastSymb = (beginSize > 0) ? from[beginSize - 1] : 'A';
 
@@ -85,6 +99,7 @@ namespace Agent
         // возвращает следудующую комбинацию из лексикографического порядка
         private void NextSymb(ref StringBuilder runner, ref char lastSymb)
         {
+            //if (lastSymb <= 0) throw new ArgumentOutOfRangeException("lastSymb");
             int len = runner.Length;
             lastSymb = runner[len - 1];
             // если последняя буква бегунка -- последняя буква алфавита -- 
@@ -113,6 +128,41 @@ namespace Agent
                 runner.Remove(len - 1, 1);
                 runner.Append(lastSymb); // заменяем на следующий символ
             }
+        }
+
+
+        // перевод слова в сс, мощность сс = мощности алфавита
+        public int FromWordToNum(string str)
+        {
+            int res = 0;
+            char[] letterArr = str.ToCharArray();
+
+            var AlphabetLen = Alphabet.Length;
+
+            for (int i = str.Length - 1; i >= 0; --i)
+            {
+                res += (Array.IndexOf(Alphabet, letterArr[i]) + 1) *
+                       (int) Math.Pow((double) AlphabetLen, (double) (str.Length - 1 - i));
+            }
+
+            return res;
+        }
+
+        // перевод из алфавитной сс в слово
+        public string FromNumToWord(int num)
+        {
+            //StringBuilder word = new StringBuilder();
+            List<char> wordArr = new List<char>();
+            var AlphabetLen = Alphabet.Length;
+
+            for (int i = (num - 1) % AlphabetLen; num > 0; num /= AlphabetLen, i = (num - 1) % AlphabetLen)
+            {
+                wordArr.Add(Alphabet[i]);
+            }
+
+            wordArr.Reverse();
+            string word = string.Join("", wordArr);
+            return word;
         }
     }
 }
