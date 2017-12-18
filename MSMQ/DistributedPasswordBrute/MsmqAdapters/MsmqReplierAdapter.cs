@@ -1,8 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Messaging;
 using System.Text;
-
-// ".\private$\InvalidMessages"
 
 namespace MsmqAdapters
 {
@@ -11,7 +10,8 @@ namespace MsmqAdapters
     /// </summary>
     public class MsmqReplierAdapter
     {
-        private MessageQueue _invalidQueue;
+        private readonly MessageQueue _invalidQueue;
+        private readonly Agent.Agent _agent;
 
         /// <summary>
         /// Для инициализации объекта MsmqReplierAdapter следует передать имена очереди запросов и очереди сообщений недопустимого формата
@@ -19,8 +19,9 @@ namespace MsmqAdapters
         /// </summary>
         /// <param name="requestQueueName">имя очереди запросов</param>
         /// <param name="invalidQueueName">имя очереди сообщений недопустимого формата</param>
-        public MsmqReplierAdapter(String requestQueueName, String invalidQueueName)
+        public MsmqReplierAdapter(String requestQueueName, String invalidQueueName, Agent.Agent agent)
         {
+            _agent = agent;
             MessageQueue requestQueue = new MessageQueue(requestQueueName);
             _invalidQueue = new MessageQueue(invalidQueueName);
 
@@ -56,13 +57,20 @@ namespace MsmqAdapters
                 Console.WriteLine(requestMessage.Body);
 
                 string messageBody = requestMessage.Body.ToString();
-
+                List<KeyValuePair<string, string>> passwdList = _agent.Calculate(messageBody);
+                
                 // Реализация "обратного адреса"
                 MessageQueue replyQueue = requestMessage.ResponseQueue;
                 
                 // Формируем новое сообщение
                 Message replyMessage = new Message();
-                replyMessage.Body = messageBody;
+
+                if (passwdList.Count != 0)
+                {
+                    replyMessage.Extension = new byte[1];
+                    replyMessage.Body = passwdList;
+                }
+                replyMessage.Body = "Is Empty";
                 replyMessage.CorrelationId = requestMessage.Id;
 
                 // Отправляем сообщение

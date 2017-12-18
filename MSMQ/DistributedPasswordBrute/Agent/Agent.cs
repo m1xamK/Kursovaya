@@ -7,9 +7,9 @@ using System.Threading;
 
 namespace Agent
 {
-    public static class Agent
+    public class Agent
     {
-        private static readonly char[] Alphabet =
+        private readonly char[] Alphabet =
         {
             'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
             'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
@@ -17,9 +17,16 @@ namespace Agent
             'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'
         };
 
-        public static void Main()
+        public List<KeyValuePair<string, string>> Calculate(string message)
         {
-            return;
+            // парсим сообщение.
+            // todo
+            string from = message.Substring(0, 4);
+            string to = message.Substring(0, 4);
+            string[] hash = message.Split(' ');
+
+            // находим совпадения.
+            return SearchPassword(from, to, hash);
         }
 
         /*
@@ -28,9 +35,9 @@ namespace Agent
          * string to        -- конец поиска,  ДО такого-то слова
          * string[] hashSum_arr -- массив нужных нам сверток
          */
-        public static string[] SearchPassword(string from, string to, string[] hashSumArr)
+        private List<KeyValuePair<string, string>> SearchPassword(string from, string to, string[] hashSumArr)
         {
-            List<string> passwdList = new List<string>(); // требуемые пароли
+            List<KeyValuePair<string, string>> passwdList = new List<KeyValuePair<string, string>>(); // требуемые пароли
             int numOfPasswd = hashSumArr.Length;
             List<string> hashSumList = hashSumArr.ToList();
 
@@ -38,7 +45,7 @@ namespace Agent
             if (String.CompareOrdinal(from, to) > 0)
                 throw new Exception("From > to in lexicographic order!");
 
-            StringBuilder runner = new StringBuilder(from);      // бегунок
+            StringBuilder runner = new StringBuilder(from);      // строка для которой генерируется хеш в цикле
             int beginSize = from.Length;
             char lastSymb = (beginSize > 0) ? from[beginSize - 1] : 'A';
 
@@ -52,29 +59,31 @@ namespace Agent
                 if (hashSumList.Contains(curMd5))
                 {
                     hashSumList.Remove(curMd5);
-                    passwdList.Add(runner.ToString());
+                    KeyValuePair<string, string> temp = new KeyValuePair<string, string>(curMd5, runner.ToString());
+
+                    passwdList.Add(temp);
                 }
             }
 
-            return passwdList.ToArray();
+            return passwdList;
         }
 
         //собственно, ищется строковое представление md5 от строки. Честно спеижженно
-        public static string Md5Hash(string input)
+        private string Md5Hash(string input)
         {
             StringBuilder hash = new StringBuilder();
             MD5CryptoServiceProvider md5Provider = new MD5CryptoServiceProvider();
             byte[] bytes = md5Provider.ComputeHash(new UTF8Encoding().GetBytes(input));
 
-            for (int i = 0; i < bytes.Length; i++)
+            foreach (byte t in bytes)
             {
-                hash.Append(bytes[i].ToString("x2"));
+                hash.Append(t.ToString("x2"));
             }
             return hash.ToString();
         }
 
         // возвращает следудующую комбинацию из лексикографического порядка
-        static void NextSymb(ref StringBuilder runner, ref char lastSymb)
+        private void NextSymb(ref StringBuilder runner, ref char lastSymb)
         {
             int len = runner.Length;
             lastSymb = runner[len - 1];
