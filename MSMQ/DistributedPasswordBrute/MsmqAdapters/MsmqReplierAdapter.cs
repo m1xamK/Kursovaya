@@ -11,6 +11,7 @@ namespace MsmqAdapters
     public class MsmqReplierAdapter
     {
         private readonly MessageQueue _invalidQueue;
+        private readonly MessageQueue requestQueue;
         private readonly Agent.Agent _agent;
 
         /// <summary>
@@ -22,8 +23,18 @@ namespace MsmqAdapters
         public MsmqReplierAdapter(String requestQueueName, String invalidQueueName, Agent.Agent agent)
         {
             _agent = agent;
-            MessageQueue requestQueue = new MessageQueue(requestQueueName);
-            _invalidQueue = new MessageQueue(invalidQueueName);
+            // MessageQueue requestQueue = new MessageQueue(requestQueueName);
+
+            if (!MessageQueue.Exists(requestQueueName))
+            {
+                requestQueue = MessageQueue.Create(requestQueueName);
+            }
+            else
+            {
+                requestQueue = new MessageQueue(requestQueueName);
+            }
+
+            //_invalidQueue = new MessageQueue(invalidQueueName);
 
             requestQueue.MessageReadPropertyFilter.SetAll();
             ((XmlMessageFormatter)requestQueue.Formatter).TargetTypeNames = new string[]{"System.String,mscorlib"};

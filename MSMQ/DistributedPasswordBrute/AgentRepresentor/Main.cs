@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Messaging;
 using MsmqAdapters;
 
 namespace AgentRepresentor
@@ -7,7 +8,15 @@ namespace AgentRepresentor
     {
         public static void Main()
         {
-            MsmqReplierAdapter replier = new MsmqReplierAdapter(".\\private$\\RequestMessages", ".\\private$\\InvalidMessages", new Agent.Agent());
+            string requestQueueName = ".\\RequestMessages";
+
+            MessageQueue myQueue = MessageQueue.Create(".\\myQueue");
+            myQueue.Send("Public queue by path name.");
+
+            var requestQueue = MessageQueue.Create(requestQueueName);
+
+
+            MsmqReplierAdapter replier = new MsmqReplierAdapter(".\\RequestMessages", ".\\private$\\InvalidMessages", new Agent.Agent());
 
             while (true)
             {
