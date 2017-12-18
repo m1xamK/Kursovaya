@@ -9,7 +9,7 @@ namespace ManagerRepresentor
         static void Main()
         {
             string[] commandArr = { "" };   //Массив содержит команду и параметры, если такие имеются
-            Regex regex = new Regex("[0-9a-f]{32}"); //Регулярное выражение проверяющее hash сумму
+            Regex regex = new Regex("[0-9a-z]{32}"); //Регулярное выражение проверяющее hash сумму
             ManagerRepresentor managerRepresentor = new ManagerRepresentor(".\\private$\\RequestQueue", ".\\private$\\ReplyQueue");
             managerRepresentor.PrintResult();
             while (true)
