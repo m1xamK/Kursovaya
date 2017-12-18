@@ -45,8 +45,8 @@ namespace Manager
 		/// <summary>
 		/// указываем пути до ресурсов обмена
 		/// </summary>
-		/// <param name="requestResurce"></param>
-		/// <param name="replayResurse"></param>
+        /// <param name="requestResource"></param>
+        /// <param name="replyResourсe"></param>
         public Manager(string requestResource, string replyResourсe)
 		{
             _sender = new MsmqRequestorAdapter(requestResource, replyResourсe);

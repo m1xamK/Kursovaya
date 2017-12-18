@@ -29,16 +29,16 @@ namespace ManagerRepresentor
                         break;
                     case ("add_hash"): //Добавляет хеш сумму введенную в консоли(add_hash hash)
                         if (commandArr.Length == 2 && regex.IsMatch(commandArr[1])) // Проверка валидности хеша
-                            managerRepresentor.pushNewHash(commandArr[1]);
+                            managerRepresentor.PushNewHash(commandArr[1]);
                         else
                             Console.WriteLine("Не правильно введен hash");
                         break;
-                    case ("add_hashfile")://Добавляет хеш суммы из файла(строки файла)
-                        if (commandArr.Length == 2 && File.Exists(commandArr[1]))//Проверка того, что файл существует
+                    case ("add_hashfile"):  //Добавляет хеш суммы из файла(строки файла)
+                        if (commandArr.Length == 2 && File.Exists(commandArr[1]))   //Проверка того, что файл существует
                         {
-                            var hashFromFile = File.ReadAllLines(commandArr[1]); //Чтение файла построчно
+                            var hashFromFile = File.ReadAllLines(commandArr[1]);    //Чтение файла построчно
                             foreach (string hash in hashFromFile)
-                                if(regex.IsMatch(hash)) managerRepresentor.pushNewHash(hash); //Если строка md5, то добавляем в List managerRepresentor 
+                                if(regex.IsMatch(hash)) managerRepresentor.PushNewHash(hash); //Если строка md5, то добавляем в List managerRepresentor 
                         }
                         else
                             Console.WriteLine("Не правильно введен путь к файлу с хешами");

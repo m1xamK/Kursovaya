@@ -15,19 +15,19 @@ namespace ManagerRepresentor
         /// Конструктор класса ManagerRepresentor
         /// </summary>
         /// <param name="requestResource"></param>
-        /// <param name="replyResourse"></param>
-        public ManagerRepresentor(string requestResource, string replyResourse)
+        /// <param name="replyResourсe"></param>
+        public ManagerRepresentor(string requestResource, string replyResourсe)
         {
             _hashList = new List<string>(); //инициализация перемееных
             _calcultationFlag = false;
-            _manager = new Manager.Manager(requestResource, replyResourse);
+            _manager = new Manager.Manager(requestResource, replyResourсe);
         }
         /// <summary>
         /// Добавляет новый хеш в List
         /// </summary>
         /// <param name="hash">md5 hash summ</param>
         /// <returns></returns>
-        public bool pushNewHash(string hash)
+        public bool PushNewHash(string hash)
         {
             _hashList.Add(hash); //Добавление md5 в List
             return true;
@@ -55,13 +55,13 @@ namespace ManagerRepresentor
         /// <returns></returns>
         public bool PrintResult()
         {
-            Thread _logthread = new Thread(getLog);// Создание потока ввыводяшего результат
+            Thread _logthread = new Thread(GetLog);// Создание потока ввыводяшего результат
             return true;
         }
         /// <summary>
         /// Сама функция выводящая на экран
         /// </summary>
-        public void getLog()
+        public void GetLog()
         {
             string log = "";
             StreamWriter logStreamWriter= new StreamWriter(@"../logs.txt", true);
