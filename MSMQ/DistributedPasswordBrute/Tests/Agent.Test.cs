@@ -1,8 +1,4 @@
-﻿<<<<<<< .mine
-using System.Collections.Generic;
-using NUnit.Framework;
-=======
-/*using NUnit.Framework;
+﻿/*using NUnit.Framework;
 
 >>>>>>> .theirs
 

@@ -5,24 +5,6 @@
 
 namespace Manager
 {
-	class MessageInProcess
-	{
-		private DateTime _time;
-		private KeyValuePair<int, int> _range;
-		private const int Overdude = 1000;
-
-		public MessageInProcess(long time, KeyValuePair<int, int> range)
-		{
-			_time = new DateTime(time);
-			_range = range;
-		}
-
-		bool IsValid()
-		{
-			return _time.Ticks - Overdude <= DateTime.Now.Ticks;
-		}
-	}
-
 	/// <summary>
 	/// класс осуществляющий равномерное распределение вычисления md5 праобраза 
 	/// </summary>
@@ -40,8 +22,6 @@ namespace Manager
 		/// </summary>
 		private readonly MsmqRequestorAdapter _sender;
 
-		private readonly Dictionary<string, MessageInProcess> _agents;
-
 		/// <summary>
 		/// указываем пути до ресурсов обмена
 		/// </summary>
@@ -50,7 +30,6 @@ namespace Manager
         public Manager(string requestResource, string replyResourсe)
 		{
             _sender = new MsmqRequestorAdapter(requestResource, replyResourсe);
-			_agents = new Dictionary<string, MessageInProcess>();
 		}
 
 		/// <summary>
@@ -60,12 +39,7 @@ namespace Manager
 		/// <param name="count"> сколько надо посчитать агенту строк после</param>
 		/// <param name="hash">праобразы md5 сверток</param>
 		void Send(int start, int count, string[] hash)
-		{
-			var msgId = DateTime.Now.Ticks;
-			var newMsg = new MessageInProcess(msgId, new KeyValuePair<int, int>(start, start + count));
-			
-			_agents.Add(msgId.ToString(), newMsg);
-
+		{	
 			_sender.Send(start.ToString(), count, hash);
 		}
 
