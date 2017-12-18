@@ -31,9 +31,9 @@ namespace Manager
 		//Наверное надо брать константы из файла конфига или как-то задавать, крч надо подумать а пока и так сойдет
 
 		//количетво бук в алфавите
-		public const int AlphabetSize = 60;
+		public const int AlphabetSize = 30;
 		//предполагаемое количестао символов в будующей подюорке
-		public const int QantityOfSymbols = 6;
+		public const int QantityOfSymbols = 3;
 
 		/// <summary>
 		/// некий механизм осуществляющий передачу сообщений до агента
@@ -80,7 +80,7 @@ namespace Manager
 			string result = "";
 
 			int count = (int)Math.Pow(AlphabetSize, QantityOfSymbols);
-			int step = 10000000;
+			int step = 10000;
 
 			for (int i = 1; i < count; i += step)
 			{
@@ -89,7 +89,7 @@ namespace Manager
 
 				Send(i, i + step, hashs);
 
-				result = hashs.Aggregate(result, (current, hash) => current + ("Send msg for " + hash + " from " + i + " to " + i + step + "\n"));
+				//result = hashs.Aggregate(result, (current, hash) => current + ("Send msg for " + hash + " from " + i + " to " + i + step + "\n"));
 			}
 
 			return result;
@@ -97,7 +97,10 @@ namespace Manager
 
 		public string ReciveSync()  // changed by m1xamk void -> string
 		{
-			_sender.ReceiveSync();
+			var message = _sender.ReceiveSync();
+
+			//Console.WriteLine(message.Body);
+			Console.WriteLine("\t!!ReciveSync!!");
 
 		    return "log";
 		}

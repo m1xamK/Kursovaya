@@ -2,6 +2,8 @@
 using System.Messaging;
 using System.Text;
 using Message = System.Messaging.Message;
+using System.Runtime.Serialization;
+using System.IO;
 
 // ".\private$\ReplyQueue"
 // ".\private$\RequestQueue"
@@ -20,15 +22,16 @@ namespace MsmqAdapters
         /// <param name="replyQueueName">имя очереди ответов</param>
         public MsmqRequestorAdapter(string requestQueueName, string replyQueueName)
         {
-            _requestQueue = new MessageQueue(requestQueueName);
-            _replyQueue = new MessageQueue(replyQueueName);
+            _requestQueue = !MessageQueue.Exists(requestQueueName) ? MessageQueue.Create(requestQueueName) : new MessageQueue(requestQueueName);
+
+            _replyQueue = !MessageQueue.Exists(replyQueueName) ? MessageQueue.Create(replyQueueName) : new MessageQueue(replyQueueName);
 
             // Фильтр для считывания сообщения со всеми свойствами
             _replyQueue.MessageReadPropertyFilter.SetAll();
 
             // Задаем формат содержимого сообщения как строку.
             // ReSharper disable once RedundantExplicitArrayCreation
-            ((XmlMessageFormatter)_replyQueue.Formatter).TargetTypeNames = new string[] { "System.String,mscorlib" };
+            ((XmlMessageFormatter)_replyQueue.Formatter).TargetTypeNames = new string[] { "System.String" };
         }
 
         /// <summary>
@@ -40,21 +43,21 @@ namespace MsmqAdapters
         public string Send(string start, int count, string[] hashSumArr)
         {
             Message requestMessage = new Message();
-            StringBuilder msgBody = new StringBuilder(start + " " + count.ToString());
+
+	        string msgBody = start + " " + count;
+
             foreach (var hash in hashSumArr)
             {
-                msgBody.Append(' ');
-                msgBody.Append(hash);
+                msgBody += ' ';
+                msgBody += hash;
             }
-            
+			
             requestMessage.Body = msgBody;              // Задаем содержимое сообщения
+            
             requestMessage.ResponseQueue = _replyQueue; // Задаем обратный адрес
-
-            // Задаем максимальное количество времени в течении которого сообщение должно быть получено из очереди
-            requestMessage.TimeToBeReceived = TimeSpan.FromMinutes(1);
-
+			
             // Отправляем сообщение
-            _requestQueue.Send(requestMessage);
+			_requestQueue.Send(requestMessage);
 
             // для дебага
             Console.WriteLine("Sent request message");
@@ -76,7 +79,7 @@ namespace MsmqAdapters
             Console.WriteLine("Received reply");
             Console.WriteLine("Message ID:" + replyMessage.Id);
             Console.WriteLine("Message Correlation ID:" + replyMessage.CorrelationId);
-            Console.WriteLine("Message Body:" + replyMessage.Body);
+            Console.WriteLine("Message Body:" + replyMessage.Body + "\n");
 
             return replyMessage;
         }
