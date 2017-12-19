@@ -56,6 +56,7 @@ namespace MsmqAdapters
             
             requestMessage.ResponseQueue = _replyQueue; // Задаем обратный адрес
 			
+			requestMessage.TimeToBeReceived = TimeSpan.FromMinutes(1);
             // Отправляем сообщение
 			_requestQueue.Send(requestMessage);
 
