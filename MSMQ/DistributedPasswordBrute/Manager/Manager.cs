@@ -96,6 +96,14 @@ namespace Manager
 		{
 			var message = _sender.ReceiveSync();
 
+			if (message == null)
+				return null;
+
+			if (message.Extension[0] == 1)
+			{
+				var a = message.Body;
+			}
+
 			//Console.WriteLine(message.Body);
 			Console.WriteLine("\t!!ReciveSync!!");
 
