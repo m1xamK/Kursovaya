@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Messaging;
-using System.Text;
 using Message = System.Messaging.Message;
-using System.Runtime.Serialization;
-using System.IO;
 
 // ".\private$\ReplyQueue"
 // ".\private$\RequestQueue"
@@ -31,6 +28,7 @@ namespace MsmqAdapters
 	        else
 		        _requestQueue = MessageQueue.Create(requestQueueName);
 
+			//_replyQueue = !MessageQueue.Exists(replyQueueName) ? MessageQueue.Create(replyQueueName) : new MessageQueue(replyQueueName);
 	        if (MessageQueue.Exists(requestQueueName))
 	        {
 		        _replyQueue = new MessageQueue(replyQueueName);
@@ -39,7 +37,7 @@ namespace MsmqAdapters
 	        else
 		        _replyQueue = MessageQueue.Create(replyQueueName);
 
-            //_replyQueue = !MessageQueue.Exists(replyQueueName) ? MessageQueue.Create(replyQueueName) : new MessageQueue(replyQueueName);
+            
 
             // Фильтр для считывания сообщения со всеми свойствами
             _replyQueue.MessageReadPropertyFilter.SetAll();

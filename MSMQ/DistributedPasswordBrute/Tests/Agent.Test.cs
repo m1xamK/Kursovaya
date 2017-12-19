@@ -1,19 +1,4 @@
-﻿<<<<<<< .mine
-
-=======
-/*using NUnit.Framework;
->>>>>>> .theirs
-using System.Collections.Generic;
-<<<<<<< .mine
-using System.Security.Cryptography;
-using System.Text;
-using NUnit.Framework;
-=======
-
-
-
->>>>>>> .theirs
-
+﻿using System.Collections.Generic;
 using NUnit.Framework;
 
 namespace Agent.Tests
