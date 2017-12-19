@@ -30,7 +30,7 @@ namespace Manager
 		//Наверное надо брать константы из файла конфига или как-то задавать, крч надо подумать а пока и так сойдет
 
 		//количетво бук в алфавите
-		public const int AlphabetSize = 70;
+		public const int AlphabetSize = 36;
 
 		//предполагаемое количестао символов в будующей подюорке
 		public const int QantityOfSymbols = 3;
