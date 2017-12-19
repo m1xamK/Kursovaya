@@ -31,24 +31,29 @@ namespace Manager
 
 		//количетво бук в алфавите
 		public const int AlphabetSize = 30;
+
 		//предполагаемое количестао символов в будующей подюорке
 		public const int QantityOfSymbols = 3;
+
 		//кол-во комбинаций, которые нужно проверить, отправляемые в одном сообщениии
 		public const int Step = 100;
 
-		/// <summary>
+		//Сколько в очереди может быть одновременно сообщений
+		public const int MsgInQueue = 10;
+
 		/// некий механизм осуществляющий передачу сообщений до агента
-		/// </summary>
 		private readonly MsmqRequestorAdapter _sender;
 
-		//сообщения в обработке
+		//сообщения находящиеся в обработке агентами
 		private Dictionary<string, MsgInProcess> _msgList; 
 
 		//храним пару - md5 комбинация и ответ на нее, для которых мы узнали
 		private Dictionary<string, string> _resultHashAnswer;
 
+		//Сколько у нас различных комбинаций строк из К символов
 		public int Count { get; private set; }
-		public int MsgInQueue { get; set; }
+
+		//конец последнего диапазона, отправленого для просчета агенту
 		public int PreviosEnd { get; private set; }
 
 		/// <summary>
@@ -58,7 +63,8 @@ namespace Manager
         /// <param name="replyResourсe"></param>
         public Manager(string requestResource, string replyResourсe, int count)
 		{
-			Count = (int)Math.Pow(AlphabetSize, QantityOfSymbols);;
+			Count = (int)Math.Pow(AlphabetSize, QantityOfSymbols);
+			PreviosEnd = 0;
 			_msgList = new Dictionary<string, MsgInProcess>();
 			_sender = new MsmqRequestorAdapter(requestResource, replyResourсe);
 			_resultHashAnswer = new Dictionary<string, string>();
@@ -68,34 +74,35 @@ namespace Manager
 		/// <summary>
 		/// отправка сообщения агенту 
 		/// </summary>
-		/// <param name="start"> начальний сдвиг числа от которого пойдет перебор </param>
-		/// <param name="count"> сколько надо посчитать агенту строк после</param>
-		/// <param name="hash">праобразы md5 сверток</param>
-		void Send(string[] hash)
+		/// <param name="count"></param>
+		/// <param name="hash">md5 свертки</param>
+		/// <param name="start"></param>
+		void Send(int start, int count, string[] hash)
 		{
 			//отправляем сообщение агенту через какое либо средство обмена сообщениями
-			var msdId = _sender.Send(PreviosEnd.ToString(), Step, hash);
-
-			PreviosEnd += Step;//сохраняем конец, отправленого диапазона 
+			var msdId = _sender.Send(start.ToString(), count, hash);
 
 			//отправляем сообщние в обрабатываемые
-			_msgList.Add(msdId, new MsgInProcess(hash, new KeyValuePair<int, int>(PreviosEnd, PreviosEnd + Step), DateTime.Now));
+			_msgList.Add(msdId, new MsgInProcess(hash, new KeyValuePair<int, int>(start, count), DateTime.Now));
 		}
 
 		/// <summary>
-		/// ну берем и считаем сколько должно получиться различных чисел в к ичной системе счисления 
-		/// длинной QantityOfSymbols знаков, разбиваем на отдельные промежутки и отправлем в очередь
+		/// заполняем очередь сообщений
 		/// </summary>
 		/// <param name="hash"></param>
 		/// <returns></returns>
 		public string FindHash(string[] hashs)
 		{
-			for(int i = 0; i < MsgInQueue; ++i)
-				Send(hashs);
+			for (int i = 0; i < MsgInQueue; ++i)
+			{
+				Send(PreviosEnd, Step, hashs);
+				PreviosEnd += Step;
+			}
 
 			return "";
 		}
 
+		//отправляем сообщение на основе предыдущего
 		public void NextMsgSend(string msgId)
 		{
 			if (PreviosEnd > Count)
@@ -103,28 +110,45 @@ namespace Manager
 
 			var msg = _msgList[msgId];
 
-			Send(msg.Hashs);
+			Send(PreviosEnd, Step, msg.Hashs);
+
+			PreviosEnd += Step;//сохраняем конец, отправленого диапазона 
 
 			_msgList.Remove(msgId);
 		}
 
-		public string ReciveSync()  // changed by m1xamk void -> string
+		public void ReciveSync()  // changed by m1xamk void -> string
 		{
 			var message = _sender.ReceiveSync();
 
 			if (message == null)
-				return null;
+				return ;
 
-			if (message.Extension != null)
+			//если у агента получилось посчитать ответ хоть на один hash
+			if (true) //я хз какое условие
 			{
-				var a = message.Body;
-				Console.WriteLine(a.ToString());
+				var messageBody = message.Body.ToString();
+
+				var pairs = messageBody.Split(' ');
+
+				for (int i = 0; i < pairs.Length - 1; ++i)
+					_resultHashAnswer.Add(pairs[i], pairs[i + 1]);
 			}
 
-			//Console.WriteLine(message.Body);
-			Console.WriteLine("\t!!ReciveSync!!");
+			NextMsgSend(message.CorrelationId);
 
-		    return "log";
+			_msgList.Remove(message.CorrelationId);
+
+			//проверяем "свежесть" сообщений, отправляем еще раз, если кто-то испортился
+			foreach (var msgInProcess in _msgList)
+			{
+				if (msgInProcess.Value.Time.Ticks - DateTime.Now.Ticks > 10000)
+				{
+					Send(msgInProcess.Value.Range.Key, msgInProcess.Value.Range.Value, msgInProcess.Value.Hashs);
+
+					_msgList.Remove(msgInProcess.Key);
+				}
+			}
 		}
 
     }
