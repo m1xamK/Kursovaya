@@ -30,7 +30,7 @@ namespace Manager
 		//Наверное надо брать константы из файла конфига или как-то задавать, крч надо подумать а пока и так сойдет
 
 		//количетво бук в алфавите
-		public const int AlphabetSize = 36;
+		public const int AlphabetSize = 70;
 
 		//предполагаемое количестао символов в будующей подюорке
 		public const int QantityOfSymbols = 3;
@@ -132,7 +132,9 @@ namespace Manager
 				for (int i = 0; i < pairs.Length - 1; i += 2)
 				{
 					Console.WriteLine("\t pair of md5 and password :" + pairs[i] + " "+ pairs[i + 1] + "\n");
-					_resultHashAnswer.Add(pairs[i], pairs[i + 1]);
+
+					if (!_resultHashAnswer.ContainsKey(pairs[i]))
+						_resultHashAnswer.Add(pairs[i], pairs[i + 1]);
 				}
 			}
 

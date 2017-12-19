@@ -26,7 +26,8 @@ namespace Agent
         {
             var messageInfo = message.Split(' ');
 
-            string from = messageInfo[0];
+			int num = Convert.ToInt32(messageInfo[0]);
+			string from = FromNumToWord(num);
             int count = Convert.ToInt32(messageInfo[1]);
 
             List<string> hashSumList = new List<string>();
@@ -130,6 +131,7 @@ namespace Agent
         }
 
 
+		// delete
         // перевод слова в систему счисления, мощность систему счисления = мощности алфавита
         public int FromWordToNum(string str)
         {
@@ -140,8 +142,9 @@ namespace Agent
 
             for (int i = str.Length - 1; i >= 0; --i)
             {
-                res += (Array.IndexOf(Alphabet, letterArr[i]) + 1) *
+                res += (Array.IndexOf(Alphabet, letterArr[i]) + 1) *	// need fix
                        (int) Math.Pow(alphabetLen, str.Length - 1 - i);
+				//res +=
             }
 
             return res;
@@ -150,10 +153,13 @@ namespace Agent
         // перевод из алфавитной систему счисления в слово
         public string FromNumToWord(int num)
         {
+	        if (num == 0)
+		        return "0";
+
             List<char> wordArr = new List<char>();
             var alphabetLen = Alphabet.Length;
 
-            for (int i = (num - 1) % alphabetLen; num > 0; num /= alphabetLen, i = (num - 1) % alphabetLen)
+            for (int i = num % alphabetLen; num > 0; num /= alphabetLen, i = num % alphabetLen)
             {
                 wordArr.Add(Alphabet[i]);
             }

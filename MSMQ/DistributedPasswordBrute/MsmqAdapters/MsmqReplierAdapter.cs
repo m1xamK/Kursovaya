@@ -74,6 +74,8 @@ namespace MsmqAdapters
 					
 	                foreach (var pair in passwdList)
 		                str += pair.Key + " " + pair.Value + " ";
+
+	                str = str.Substring(0, str.Length - 1);
                 }
 				replyMessage.Body = str;
 
