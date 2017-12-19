@@ -69,13 +69,14 @@ namespace MsmqAdapters
 
                 if (passwdList.Count != 0)
                 {
-                    replyMessage.Extension = new byte[1];
-					Console.WriteLine("sucker!!!");
+                    replyMessage.Extension = new byte[]{1};
+					Console.WriteLine("\tFIND!!!");
 					
 					replyMessage.Body = passwdList;
                 }
                 else
                 {
+					replyMessage.Extension = new byte[]{0};
 					replyMessage.Body = "Is Empty";
                 }
 

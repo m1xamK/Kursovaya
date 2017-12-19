@@ -22,9 +22,24 @@ namespace MsmqAdapters
         /// <param name="replyQueueName">имя очереди ответов</param>
         public MsmqRequestorAdapter(string requestQueueName, string replyQueueName)
         {
-            _requestQueue = !MessageQueue.Exists(requestQueueName) ? MessageQueue.Create(requestQueueName) : new MessageQueue(requestQueueName);
+            //_requestQueue = !MessageQueue.Exists(requestQueueName) ? MessageQueue.Create(requestQueueName) : new MessageQueue(requestQueueName);
+	        if (MessageQueue.Exists(requestQueueName))
+	        {
+		        _requestQueue = new MessageQueue(requestQueueName);
+		        _requestQueue.Purge();
+	        }
+	        else
+		        _requestQueue = MessageQueue.Create(requestQueueName);
 
-            _replyQueue = !MessageQueue.Exists(replyQueueName) ? MessageQueue.Create(replyQueueName) : new MessageQueue(replyQueueName);
+	        if (MessageQueue.Exists(requestQueueName))
+	        {
+		        _replyQueue = new MessageQueue(replyQueueName);
+		        _replyQueue.Purge();
+	        }
+	        else
+		        _replyQueue = MessageQueue.Create(replyQueueName);
+
+            //_replyQueue = !MessageQueue.Exists(replyQueueName) ? MessageQueue.Create(replyQueueName) : new MessageQueue(replyQueueName);
 
             // Фильтр для считывания сообщения со всеми свойствами
             _replyQueue.MessageReadPropertyFilter.SetAll();

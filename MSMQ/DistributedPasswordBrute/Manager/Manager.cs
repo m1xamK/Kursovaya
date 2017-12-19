@@ -27,7 +27,7 @@ namespace Manager
 		//предполагаемое количестао символов в будующей подюорке
 		public const int QantityOfSymbols = 3;
 		//кол-во комбинаций, которые нужно проверить, отправляемые в одном сообщениии
-		public const int Step = 10000;
+		public const int Step = 100;
 
 		/// <summary>
 		/// некий механизм осуществляющий передачу сообщений до агента
@@ -99,9 +99,10 @@ namespace Manager
 			if (message == null)
 				return null;
 
-			if (message.Extension[0] == 1)
+			if (message.Extension != null)
 			{
 				var a = message.Body;
+				Console.WriteLine(a.ToString());
 			}
 
 			//Console.WriteLine(message.Body);

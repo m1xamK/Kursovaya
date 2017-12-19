@@ -45,7 +45,15 @@ namespace ManagerRepresentor
             }
             _calcultationFlag = true;//Установка флага произведения вычислений
             _manager.FindHash(_hashList.ToArray<string>());//Инициализация вычислений
-	        _manager.ReciveSync();
+
+	        int temp = 0;
+	        while (++temp < 10)
+	        {
+				_manager.ReciveSync();
+		        Thread.Sleep(1000);
+	        }
+	       
+
             _hashList.Clear();//После окончания вычислений отчистка _hashList
             return true;
         }
