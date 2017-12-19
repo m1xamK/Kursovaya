@@ -115,7 +115,7 @@ namespace Agent
                 {
                     runner.Remove(len - 1, 1);
                     lastSymb = runner[len - 2];
-                    NextSymb(ref runner, ref lastSymb);
+                    NextSymb(ref runner);
                     runner.Append('a');
                 }
 

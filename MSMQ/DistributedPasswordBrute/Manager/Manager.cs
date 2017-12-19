@@ -154,7 +154,7 @@ namespace Manager
 			if (_msgList.Count == 0)
 			{
 				foreach (var pair in _resultHashAnswer)
-					Console.WriteLine("\t pair of md5 and password :" + pair.Key + pair.Value + "\n");
+					Console.WriteLine("\t pair of md5 and password :" + pair.Key + "\t"+ pair.Value + "\n");
 
 				Console.WriteLine("\t Misha is pidor \n");
 
