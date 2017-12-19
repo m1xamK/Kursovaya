@@ -1,6 +1,20 @@
-﻿/*using NUnit.Framework;
+﻿<<<<<<< .mine
+
+=======
+/*using NUnit.Framework;
+>>>>>>> .theirs
+using System.Collections.Generic;
+<<<<<<< .mine
+using System.Security.Cryptography;
+using System.Text;
+using NUnit.Framework;
+=======
+
+
 
 >>>>>>> .theirs
+
+using NUnit.Framework;
 
 namespace Agent.Tests
 {
@@ -8,9 +22,21 @@ namespace Agent.Tests
     class AgentTest
     {
         [Test]
+        public void Null()
+        {
+            var zeroHash = new Agent().Md5Hash("0");
+
+            var passArr = new Agent().Calculate("0 500 " + zeroHash);
+            List<KeyValuePair<string, string>> answer = new List<KeyValuePair<string, string>>();
+            var a = new KeyValuePair<string, string>(zeroHash, "0");
+            answer.Add(a);
+            Assert.That(answer, Is.EqualTo(passArr));
+        }
+
+        [Test]
         public void First()
         {
-            var passArr = new Agent().Calculate("Z 300 4124bc0a9335c27f086f24ba207a4912 07159c47ee1b19ae4fb9c40d480856c4");
+            var passArr = new Agent().Calculate("0 500 4124bc0a9335c27f086f24ba207a4912 07159c47ee1b19ae4fb9c40d480856c4");
             List<KeyValuePair<string, string>> answer = new List<KeyValuePair<string, string>>();
             var a = new KeyValuePair<string, string>("4124bc0a9335c27f086f24ba207a4912", "aa");
             var b = new KeyValuePair<string, string>("07159c47ee1b19ae4fb9c40d480856c4", "ba");
@@ -38,4 +64,3 @@ namespace Agent.Tests
         //}
     }
 }
-*/
