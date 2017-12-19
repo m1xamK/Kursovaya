@@ -47,12 +47,8 @@ namespace ManagerRepresentor
             _manager.FindHash(_hashList.ToArray<string>());//Инициализация вычислений
 
 	        int temp = 0;
-	        while (++temp < 10)
-	        {
-				_manager.ReciveSync();
-		        Thread.Sleep(1000);
-	        }
-	       
+	        
+	        _manager.ReciveSync();
 
             _hashList.Clear();//После окончания вычислений отчистка _hashList
             return true;
@@ -72,17 +68,18 @@ namespace ManagerRepresentor
         /// </summary>
         public void GetLog()
         {
-            string log = "";
-            StreamWriter logStreamWriter= new StreamWriter(@"../logs.txt", true);
-            while (!string.Equals(log, "end"))
+			string log = "";
+			StreamWriter logStreamWriter = new StreamWriter(@"../logs.txt", true);
+			while (!string.Equals(log, "end"))
             {
-                string lastLog = _manager.ReciveSync();
-                if (!string.Equals(lastLog, log))
-                {   
-                    Console.WriteLine(lastLog);
-                    logStreamWriter.WriteLine(lastLog);
-                    log = lastLog;
-                }
+                //string lastLog = 
+				_manager.ReciveSync();
+				//if (!string.Equals(lastLog, log))
+				//{   
+				//	Console.WriteLine(lastLog);
+				//	logStreamWriter.WriteLine(lastLog);
+				//	log = lastLog;
+				//}
 
                 Thread.Sleep(150);
             }

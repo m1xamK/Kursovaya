@@ -12,9 +12,9 @@ namespace Agent
         {
             '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
             'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
-            'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
-            'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
-            'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'
+            'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'
+        //    'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
+        //    'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'
         };
 
         /// <summary>
@@ -24,7 +24,6 @@ namespace Agent
         /// <returns></returns>
         public List<KeyValuePair<string, string>> Calculate(string message)
         {
-
             var messageInfo = message.Split(' ');
 
             string from = messageInfo[0];
@@ -34,20 +33,20 @@ namespace Agent
             for (int i = 2; i < messageInfo.Length; ++i)
                 hashSumList.Add(messageInfo[i]);
 
-            string to = FromNumToWord(FromWordToNum(from) + count);
+            //string to = FromNumToWord(FromWordToNum(from) + count);
 
             // находим совпадения.
-            return SearchPassword(from, to, hashSumList);
+            return SearchPassword(from, count, hashSumList);
         }
         
         /// <summary>
         /// Ищет пароли чьи свертки лежат в массиве HashSum
         /// </summary>
         /// <param name="from"> начало поиска, от какого-то слова </param>
-        /// <param name="to"> конец поиска,  до такого-то слова </param>
+		/// <param name="count"> конец поиска,  до такого-то слова </param>
         /// <param name="hashSumList"> массив нужных нам сверток, к которым требуется подобрать пароль </param>
         /// <returns></returns>
-        private List<KeyValuePair<string, string>> SearchPassword(string from, string to, List<string> hashSumList)
+        private List<KeyValuePair<string, string>> SearchPassword(string from, int count, List<string> hashSumList)
         {
             List<KeyValuePair<string, string>> passwdList =
                 new List<KeyValuePair<string, string>>(); // требуемые пароли
@@ -55,13 +54,11 @@ namespace Agent
 
             StringBuilder runner = new StringBuilder(from); // строка для которой генерируется хеш в цикле
             int beginSize = from.Length;
-            char lastSymb = (beginSize > 0) ? from[beginSize - 1] : 'A';
+            char lastSymb = (beginSize > 0) ? from[beginSize - 1] : '0';		// WTF ?!
 
 
             // основной цикл, здесь происходит подбор паролей от и до
-            for (;
-                runner.ToString() != to && passwdList.Count != numOfPasswd;
-                NextSymb(ref runner, ref lastSymb))
+            for (int i = 0; i < count && passwdList.Count != numOfPasswd; ++i, NextSymb(ref runner))
             {
                 string curMd5 = Md5Hash(runner.ToString());
                 if (hashSumList.Contains(curMd5))
@@ -99,10 +96,10 @@ namespace Agent
         /// </summary>
         /// <param name="runner"> бегунок, строка, которая изменяется по циклу</param>
         /// <param name="lastSymb"> последний символ </param>
-        private void NextSymb(ref StringBuilder runner, ref char lastSymb)
+        private void NextSymb(ref StringBuilder runner)
         {
             int len = runner.Length;
-            lastSymb = runner[len - 1];
+            char lastSymb = runner[len - 1];
             // если последняя буква бегунка -- последняя буква алфавита -- 
             if (lastSymb == Alphabet.Last())
             {
@@ -139,12 +136,12 @@ namespace Agent
             int res = 0;
             char[] letterArr = str.ToCharArray();
 
-            var AlphabetLen = Alphabet.Length;
+            var alphabetLen = Alphabet.Length;
 
             for (int i = str.Length - 1; i >= 0; --i)
             {
                 res += (Array.IndexOf(Alphabet, letterArr[i]) + 1) *
-                       (int) Math.Pow((double) AlphabetLen, (double) (str.Length - 1 - i));
+                       (int) Math.Pow(alphabetLen, str.Length - 1 - i);
             }
 
             return res;
@@ -154,9 +151,9 @@ namespace Agent
         public string FromNumToWord(int num)
         {
             List<char> wordArr = new List<char>();
-            var AlphabetLen = Alphabet.Length;
+            var alphabetLen = Alphabet.Length;
 
-            for (int i = (num - 1) % AlphabetLen; num > 0; num /= AlphabetLen, i = (num - 1) % AlphabetLen)
+            for (int i = (num - 1) % alphabetLen; num > 0; num /= alphabetLen, i = (num - 1) % alphabetLen)
             {
                 wordArr.Add(Alphabet[i]);
             }

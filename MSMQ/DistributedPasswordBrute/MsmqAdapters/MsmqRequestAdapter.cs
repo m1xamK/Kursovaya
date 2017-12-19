@@ -93,7 +93,7 @@ namespace MsmqAdapters
             Console.WriteLine("Received reply");
             Console.WriteLine("Message ID:" + replyMessage.Id);
             Console.WriteLine("Message Correlation ID:" + replyMessage.CorrelationId);
-            Console.WriteLine("Message Body:" + replyMessage.Body + "\n");
+            Console.WriteLine("Message Body:" + replyMessage.Body.ToString() + "\n");
 
             return replyMessage;
         }

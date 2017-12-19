@@ -11,7 +11,7 @@ namespace ManagerRepresentor
             string[] commandArr = { "" };   //Массив содержит команду и параметры, если такие имеются
             Regex regex = new Regex("[0-9a-z]{32}"); //Регулярное выражение проверяющее hash сумму
             ManagerRepresentor managerRepresentor = new ManagerRepresentor(".\\Private$\\RequestQueue", ".\\Private$\\ReplyQueue");
-            managerRepresentor.PrintResult();
+   //         managerRepresentor.PrintResult();
             while (true)
             {
                 var command = Console.ReadLine();//Считывание команды с параметрами с консоли
@@ -20,6 +20,7 @@ namespace ManagerRepresentor
                 {
                     case ("exit"):
                         return ;
+
                     case ("start")://Инициализиция ычислений
                         managerRepresentor.startCalculation();
                         while (managerRepresentor._calcultationFlag)
@@ -27,12 +28,14 @@ namespace ManagerRepresentor
                             System.Threading.Thread.Sleep(300);//Приостанавливаем работу основного потока пока идут вычисления
                         }
                         break;
+
                     case ("add_hash"): //Добавляет хеш сумму введенную в консоли(add_hash hash)
                         if (commandArr.Length == 2 && regex.IsMatch(commandArr[1])) // Проверка валидности хеша
                             managerRepresentor.PushNewHash(commandArr[1]);
                         else
                             Console.WriteLine("Не правильно введен hash");
                         break;
+
                     case ("a"):  //Добавляет хеш суммы из файла(строки файла)
                         if (commandArr.Length == 2 && File.Exists(commandArr[1]))   //Проверка того, что файл существует
                         {

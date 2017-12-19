@@ -30,13 +30,13 @@ namespace Manager
 		//Наверное надо брать константы из файла конфига или как-то задавать, крч надо подумать а пока и так сойдет
 
 		//количетво бук в алфавите
-		public const int AlphabetSize = 30;
+		public const int AlphabetSize = 36;
 
 		//предполагаемое количестао символов в будующей подюорке
 		public const int QantityOfSymbols = 3;
 
 		//кол-во комбинаций, которые нужно проверить, отправляемые в одном сообщениии
-		public const int Step = 100;
+		public const int Step = 200;
 
 		//Сколько в очереди может быть одновременно сообщений
 		public const int MsgInQueue = 10;
@@ -61,7 +61,7 @@ namespace Manager
 		/// </summary>
         /// <param name="requestResource"></param>
         /// <param name="replyResourсe"></param>
-        public Manager(string requestResource, string replyResourсe, int count)
+        public Manager(string requestResource, string replyResourсe)
 		{
 			Count = (int)Math.Pow(AlphabetSize, QantityOfSymbols);
 			PreviosEnd = 0;
@@ -113,8 +113,6 @@ namespace Manager
 			Send(PreviosEnd, Step, msg.Hashs);
 
 			PreviosEnd += Step;//сохраняем конец, отправленого диапазона 
-
-			_msgList.Remove(msgId);
 		}
 
 		public void ReciveSync()  // changed by m1xamk void -> string
@@ -123,16 +121,19 @@ namespace Manager
 
 			if (message == null)
 				return ;
-
+			
 			//если у агента получилось посчитать ответ хоть на один hash
-			if (true) //я хз какое условие
+			if (message.Body.ToString() != "") //я хз какое условие
 			{
 				var messageBody = message.Body.ToString();
 
 				var pairs = messageBody.Split(' ');
 
-				for (int i = 0; i < pairs.Length - 1; ++i)
+				for (int i = 0; i < pairs.Length - 1; i += 2)
+				{
+					Console.WriteLine("\t pair of md5 and password :" + pairs[i] + " "+ pairs[i + 1] + "\n");
 					_resultHashAnswer.Add(pairs[i], pairs[i + 1]);
+				}
 			}
 
 			NextMsgSend(message.CorrelationId);
@@ -149,6 +150,18 @@ namespace Manager
 					_msgList.Remove(msgInProcess.Key);
 				}
 			}
+
+			if (_msgList.Count == 0)
+			{
+				foreach (var pair in _resultHashAnswer)
+					Console.WriteLine("\t pair of md5 and password :" + pair.Key + pair.Value + "\n");
+
+				Console.WriteLine("\t Misha is pidor \n");
+
+				return;
+			}
+				
+			ReciveSync();
 		}
 
     }

@@ -67,18 +67,15 @@ namespace MsmqAdapters
                 // Формируем новое сообщение
                 Message replyMessage = new Message();
 
+				string str = "";
                 if (passwdList.Count != 0)
                 {
-                    replyMessage.Extension = new byte[]{1};
 					Console.WriteLine("\tFIND!!!");
 					
-					replyMessage.Body = passwdList;
+	                foreach (var pair in passwdList)
+		                str += pair.Key + " " + pair.Value + " ";
                 }
-                else
-                {
-					replyMessage.Extension = new byte[]{0};
-					replyMessage.Body = "Is Empty";
-                }
+				replyMessage.Body = str;
 
                 replyMessage.CorrelationId = requestMessage.Id;
 
