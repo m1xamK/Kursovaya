@@ -10,9 +10,16 @@ namespace Manager
 	/// </summary>
 	public class MsgInProcess
 	{
-		KeyValuePair<int, int> _range;
-		DateTime _time;
-		string[] hashs;
+		public KeyValuePair<int, int> Range { get; private set; }
+		public DateTime Time { get; private set; }
+		public string[] Hashs { get; private set; }
+
+		public MsgInProcess(string[] hashs, KeyValuePair<int, int> range, DateTime time)
+		{
+			Hashs = hashs;
+			Range = range;
+			Time = time;
+		}
 	}
 
 	/// <summary>
@@ -40,16 +47,22 @@ namespace Manager
 		//храним пару - md5 комбинация и ответ на нее, для которых мы узнали
 		private Dictionary<string, string> _resultHashAnswer;
 
+		public int Count { get; private set; }
+		public int MsgInQueue { get; set; }
+		public int PreviosEnd { get; private set; }
+
 		/// <summary>
 		/// указываем пути до ресурсов обмена
 		/// </summary>
         /// <param name="requestResource"></param>
         /// <param name="replyResourсe"></param>
-        public Manager(string requestResource, string replyResourсe)
+        public Manager(string requestResource, string replyResourсe, int count)
 		{
+			Count = (int)Math.Pow(AlphabetSize, QantityOfSymbols);;
 			_msgList = new Dictionary<string, MsgInProcess>();
 			_sender = new MsmqRequestorAdapter(requestResource, replyResourсe);
 			_resultHashAnswer = new Dictionary<string, string>();
+			_msgList = new Dictionary<string, MsgInProcess>();
 		}
 
 		/// <summary>
@@ -58,9 +71,15 @@ namespace Manager
 		/// <param name="start"> начальний сдвиг числа от которого пойдет перебор </param>
 		/// <param name="count"> сколько надо посчитать агенту строк после</param>
 		/// <param name="hash">праобразы md5 сверток</param>
-		void Send(int start, int count, string[] hash)
-		{	
-			_sender.Send(start.ToString(), count, hash);
+		void Send(string[] hash)
+		{
+			//отправляем сообщение агенту через какое либо средство обмена сообщениями
+			var msdId = _sender.Send(PreviosEnd.ToString(), Step, hash);
+
+			PreviosEnd += Step;//сохраняем конец, отправленого диапазона 
+
+			//отправляем сообщние в обрабатываемые
+			_msgList.Add(msdId, new MsgInProcess(hash, new KeyValuePair<int, int>(PreviosEnd, PreviosEnd + Step), DateTime.Now));
 		}
 
 		/// <summary>
@@ -71,25 +90,22 @@ namespace Manager
 		/// <returns></returns>
 		public string FindHash(string[] hashs)
 		{
-			string result = "";
+			for(int i = 0; i < MsgInQueue; ++i)
+				Send(hashs);
 
-			int count = (int)Math.Pow(AlphabetSize, QantityOfSymbols);
+			return "";
+		}
 
-			for (int i = 1; i < count; i += Step)
-			{
-				var endOfIteration = 0;
+		public void NextMsgSend(string msgId)
+		{
+			if (PreviosEnd > Count)
+				return;
 
-				if (i + Step >= count)
-					endOfIteration = count - i;
-				else
-					endOfIteration = Step;
+			var msg = _msgList[msgId];
 
-				Send(i, i + endOfIteration, hashs);
+			Send(msg.Hashs);
 
-				//result = hashs.Aggregate(result, (current, hash) => current + ("Send msg for " + hash + " from " + i + " to " + i + step + "\n"));
-			}
-
-			return result;
+			_msgList.Remove(msgId);
 		}
 
 		public string ReciveSync()  // changed by m1xamk void -> string
