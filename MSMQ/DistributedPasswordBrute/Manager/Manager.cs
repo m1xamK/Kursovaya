@@ -6,6 +6,16 @@
 namespace Manager
 {
 	/// <summary>
+	/// структура данных ,хранящая инфу о комбинациях, находящихся в обработке у агентов
+	/// </summary>
+	public class MsgInProcess
+	{
+		KeyValuePair<int, int> _range;
+		DateTime _time;
+		string[] hashs;
+	}
+
+	/// <summary>
 	/// класс осуществляющий равномерное распределение вычисления md5 праобраза 
 	/// </summary>
 	public class Manager
@@ -16,11 +26,19 @@ namespace Manager
 		public const int AlphabetSize = 30;
 		//предполагаемое количестао символов в будующей подюорке
 		public const int QantityOfSymbols = 3;
+		//кол-во комбинаций, которые нужно проверить, отправляемые в одном сообщениии
+		public const int Step = 10000;
 
 		/// <summary>
 		/// некий механизм осуществляющий передачу сообщений до агента
 		/// </summary>
 		private readonly MsmqRequestorAdapter _sender;
+
+		//сообщения в обработке
+		private Dictionary<string, MsgInProcess> _msgList; 
+
+		//храним пару - md5 комбинация и ответ на нее, для которых мы узнали
+		private Dictionary<string, string> _resultHashAnswer;
 
 		/// <summary>
 		/// указываем пути до ресурсов обмена
@@ -29,7 +47,9 @@ namespace Manager
         /// <param name="replyResourсe"></param>
         public Manager(string requestResource, string replyResourсe)
 		{
-            _sender = new MsmqRequestorAdapter(requestResource, replyResourсe);
+			_msgList = new Dictionary<string, MsgInProcess>();
+			_sender = new MsmqRequestorAdapter(requestResource, replyResourсe);
+			_resultHashAnswer = new Dictionary<string, string>();
 		}
 
 		/// <summary>
@@ -54,14 +74,17 @@ namespace Manager
 			string result = "";
 
 			int count = (int)Math.Pow(AlphabetSize, QantityOfSymbols);
-			int step = 10000;
 
-			for (int i = 1; i < count; i += step)
+			for (int i = 1; i < count; i += Step)
 			{
-				if (i + step >= count)
-					step = count - i;
+				var endOfIteration = 0;
 
-				Send(i, i + step, hashs);
+				if (i + Step >= count)
+					endOfIteration = count - i;
+				else
+					endOfIteration = Step;
+
+				Send(i, i + endOfIteration, hashs);
 
 				//result = hashs.Aggregate(result, (current, hash) => current + ("Send msg for " + hash + " from " + i + " to " + i + step + "\n"));
 			}
