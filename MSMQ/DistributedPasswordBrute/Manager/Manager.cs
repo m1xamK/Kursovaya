@@ -1,12 +1,11 @@
 ﻿using System;
 ﻿using System.Collections.Generic;
-﻿using System.Linq;
-﻿using MsmqAdapters;
+using MsmqAdapters;
 
 namespace Manager
 {
 	/// <summary>
-	/// структура данных ,хранящая инфу о комбинациях, находящихся в обработке у агентов
+	/// структура данных, хранящая инфу о комбинациях, находящихся в обработке у агентов
 	/// </summary>
 	public class MsgInProcess
 	{

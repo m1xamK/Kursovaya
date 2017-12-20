@@ -13,14 +13,16 @@ namespace ManagerRepresentor
             ManagerRepresentor managerRepresentor = new ManagerRepresentor(".\\Private$\\RequestQueue", ".\\Private$\\ReplyQueue");
             while (true)
             {
-                var command = Console.ReadLine();//Считывание команды с параметрами с консоли
-                if (command != null) commandArr = command.Split((string[]) null, StringSplitOptions.RemoveEmptyEntries);//Если command существует разбиваем по разделителю(пробелу).
+                var command = Console.ReadLine();	//Считывание команды с параметрами с консоли
+
+				//Если command существует разбиваем по разделителю(пробелу).
+                if (command != null) commandArr = command.Split((string[]) null, StringSplitOptions.RemoveEmptyEntries);
                 switch (commandArr[0])
                 {
                     case ("exit"):
                         return ;
 
-                    case ("start")://Инициализиция ычислений.
+                    case ("start"):	//Инициализиция вычислений.
                         managerRepresentor.StartCalculation();
                         while (managerRepresentor.CalcultationFlag)
                         { 
