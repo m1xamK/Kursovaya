@@ -4,7 +4,6 @@ using MsmqAdapters;
 
 namespace Manager
 {
-
     public class LogArgs : EventArgs
     {
         public LogArgs(string logMsg)
@@ -14,26 +13,8 @@ namespace Manager
 
         public string Message { get; set; }
     }
+
     public delegate void CustomEventHandler(object sender, LogArgs logArgs);
-	/// <summary>
-	/// структура данных, хранящая информацию о комбинациях, находящихся в обработке у агентов
-	/// </summary>
-	public class MsgInProcess
-	{
-	    
-		public KeyValuePair<string, string> Range { get; private set; }
-		public DateTime Time { get; private set; }
-		public string[] Hashs { get; private set; }
-
-		public MsgInProcess(string[] hashs, KeyValuePair<string, string> range, DateTime time)
-		{
-			Hashs = hashs;
-			Range = range;
-			Time = time;
-		}
-
-	   
-	}
 
 	/// <summary>
 	/// класс осуществляющий равномерное распределение вычисления md5 праобраза 
@@ -55,15 +36,21 @@ namespace Manager
 		//храним пару - md5 комбинация и ответ на нее, для которых мы узнали
 		private Dictionary<string, string> _resultHashAnswer;
 
+		//последняя комбинация которая должна общитаться
+		private const string LastRange = "zzzzzz";
+
 		// Количество хешей, для которых ищем пароли
 		private int _hashCount;
 
+		//массив общитываемых хешей
 		private string[] _hashArr;
 
         public event EventHandler<LogArgs> logEvent;
+
         protected virtual void OnLogEvent(LogArgs e)
         {
             var handler = logEvent;
+
             if (handler != null)
             {
                 e.Message += String.Format("at {0}", DateTime.Now.ToString());
@@ -73,7 +60,7 @@ namespace Manager
         }
 
 		//конец последнего диапазона, отправленого для просчета агенту
-		public string PreviosEnd { get; private set; }
+		public string PreviousEnd { get; private set; }
 
 		/// <summary>
 		/// указываем пути до ресурсов обмена
@@ -82,7 +69,7 @@ namespace Manager
         /// <param name="replyResourсe">имя очереди ответов</param>
         public Manager(string requestResource, string replyResourсe)
 		{
-			PreviosEnd = "0";
+			PreviousEnd = "0";
 			_msgList = new Dictionary<string, MsgInProcess>();
 			_sender = new MsmqRequestorAdapter(requestResource, replyResourсe);
 			_resultHashAnswer = new Dictionary<string, string>();
@@ -100,25 +87,25 @@ namespace Manager
 			var msdId = _sender.Send(start, end, hash);
 
 			//отправляем сообщние в обрабатываемые
-			_msgList.Add(msdId, new MsgInProcess(hash, new KeyValuePair<string, string>(start, end), DateTime.Now));
+			_msgList.Add(msdId, new MsgInProcess(new KeyValuePair<string, string>(start, end), DateTime.Now));
 		}
 
 		/// <summary>
-		/// заполняем очередь сообщений
+		/// Первоначальное заполнение очереди нашеми сообщениями
 		/// </summary>
-		/// <param name="hashs">Хеш свертки для которых ищем пароли.</param>
-		public void FindHash(string[] hashs)
+		/// <param name="hashs">Хеш свертки, для которых ищем пароли.</param>
+		public void InitialFillingOfTheQueue(string[] hashs)
 		{
 			_hashCount = hashs.Length;
 			_hashArr = hashs;
 
 			for (int i = 0; i < MsgInQueue; ++i)
 			{
-				string finish = NextWord.Get(PreviosEnd);
+				string finish = NextDiapazone.Get(PreviousEnd);
 
-				Send(PreviosEnd, finish, hashs);
+				Send(PreviousEnd, finish, hashs);
 
-				PreviosEnd = finish;
+				PreviousEnd = finish;
 			}
 		}
 
@@ -128,14 +115,14 @@ namespace Manager
 		/// <param name="msgId">Идентификатор сообщения</param>
 		public void NextMsgSend(string msgId)
 		{
-			if (String.Compare(PreviosEnd, "zzzzzz", StringComparison.Ordinal) > 0)
+			if (String.Compare(PreviousEnd, LastRange, StringComparison.Ordinal) > 0)
 				return;
 
-			string finish = NextWord.Get(PreviosEnd);
+			string finish = NextDiapazone.Get(PreviousEnd);
 
-			Send(PreviosEnd, finish, _hashArr);
+			Send(PreviousEnd, finish, _hashArr);
 
-			PreviosEnd = finish; //сохраняем конец, отправленого диапазона 
+			PreviousEnd = finish; //сохраняем конец, отправленого диапазона 
 		}
 
 		public string ReciveSync() 
@@ -175,7 +162,7 @@ namespace Manager
 			{
 				if (msgInProcess.Value.Time.Ticks - DateTime.Now.Ticks > 10000)
 				{
-					Send(msgInProcess.Value.Range.Key, msgInProcess.Value.Range.Value, msgInProcess.Value.Hashs);
+					Send(msgInProcess.Value.Range.Key, msgInProcess.Value.Range.Value, _hashArr);
  
 					_msgList.Remove(msgInProcess.Key);
 				}
@@ -184,6 +171,7 @@ namespace Manager
 			if (_msgList.Count == 0 || _hashCount == 0)
 			{
 				var resultStr = "";
+
 				foreach (var pair in _resultHashAnswer)
 					resultStr += "pair of md5 and password :" + pair.Key + "\t" + pair.Value + "\n";
 				

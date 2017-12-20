@@ -44,7 +44,7 @@ namespace ManagerRepresentor
                return "Нет хеш сумм для проверки";
             
             CalcultationFlag = true;	//Установка флага произведения вычислений.
-            _manager.FindHash(_hashList.ToArray<string>());	//Инициализация вычислений.
+            _manager.InitialFillingOfTheQueue(_hashList.ToArray<string>());	//Инициализация вычислений.
 
 	        string strFlag = "";
 			while (strFlag == "")
