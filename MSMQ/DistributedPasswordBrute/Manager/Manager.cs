@@ -32,9 +32,6 @@ namespace Manager
 		//предполагаемое количестао символов в будующей подборке
 		public const int QantityOfSymbols = 3;
 
-		//алфавит, из которого может состоять hash
-		public const string Alphabet = "0123456789abcdefghijklmnopqrstuvwxyz"; 
-
 		//Сколько в очереди может быть одновременно сообщений
 		public const int MsgInQueue = 10;
 
@@ -57,7 +54,7 @@ namespace Manager
         /// <param name="replyResourсe"></param>
         public Manager(string requestResource, string replyResourсe)
 		{
-			PreviosEnd = "0";
+			PreviosEnd = "1000";
 			_msgList = new Dictionary<string, MsgInProcess>();
 			_sender = new MsmqRequestorAdapter(requestResource, replyResourсe);
 			_resultHashAnswer = new Dictionary<string, string>();
@@ -88,7 +85,7 @@ namespace Manager
 		{
 			for (int i = 0; i < MsgInQueue; ++i)
 			{
-				string finish = NextWord(PreviosEnd);
+				string finish = NextWord.Get(PreviosEnd);
 
 				Send(PreviosEnd, finish, hashs);
 
@@ -96,22 +93,6 @@ namespace Manager
 			}
 
 			return "";
-		}
-
-		string NextWord(string word)
-		{
-			if (word[0] == 'z')
-			{
-				word = word.Replace('z', '1');
-				word = word.Insert(word.Length, "0");
-				return word;
-			}
-
-			int index = Alphabet.IndexOf(word[0]);
-
-			word = word.Replace(word[0], Alphabet[++index]);
-
-			return word;
 		}
 
 		//отправляем сообщение на основе предыдущего
@@ -122,7 +103,7 @@ namespace Manager
 
 			var msg = _msgList[msgId];
 
-			string finish = NextWord(PreviosEnd);
+			string finish = NextWord.Get(PreviosEnd);
 
 			Send(PreviosEnd, finish, msg.Hashs);
 

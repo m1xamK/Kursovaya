@@ -115,20 +115,5 @@ namespace MsmqAdapters
             // Снова переходим в режим ожидания.
             requestQueue.BeginReceive();
         }
-
-	    private string[] ParseMessage(string str)
-	    {
-			var messageInfo = str.Split(' ');
-
-			string start = messageInfo[0];
-			string finish = messageInfo[1];
-			
-			List<string> hashSumList = new List<string>();
-			for (int i = 2; i < messageInfo.Length; ++i)
-				hashSumList.Add(messageInfo[i]);
-
-			// находим совпадения.
-			return SearchPassword(from, count, hashSumList);
-	    }
     }
 }

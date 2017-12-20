@@ -40,7 +40,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Agent.Test.cs" />
-    <Compile Include="MsmqReplierAdapter.Tests.cs" />
+    <Compile Include="Manager.Tests.cs" />
     <Compile Include="MsmqRequestAdapter.Tests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -61,9 +61,6 @@
       <Project>{254dff87-a576-4b82-83b9-d335c098e2f7}</Project>
       <Name>MsmqAdapters</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

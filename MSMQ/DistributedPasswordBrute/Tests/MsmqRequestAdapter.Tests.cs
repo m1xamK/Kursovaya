@@ -21,8 +21,7 @@ namespace Agent.Tests
 			var replierAdapter = new MsmqAdapters.MsmqReplierAdapter(RequestQueue, InvalidQueue, new Agent());
 
 			string start = "0";
-			int finish = 500;
-			//string finish = "hi";
+			string finish = "hi";
 
 			string str = "1";
 			var hash = new Agent().Md5Hash(str);
@@ -45,8 +44,7 @@ namespace Agent.Tests
 			MsmqAdapters.MsmqReplierAdapter replierAdapter = new MsmqAdapters.MsmqReplierAdapter(RequestQueue, InvalidQueue, new Agent());
 
 			string start = "0";
-			int finish = 500;
-			//string finish = "hi";
+			string finish = "hi";
 
 			string str = "1";
 			var hash = new Agent().Md5Hash(str);
