@@ -14,11 +14,11 @@ namespace Agent.Tests
 		[Test]
 		public void ValidMessage()
 		{
-			MsmqRequestorAdapter requestAdapter = new MsmqRequestorAdapter(RequestQueue, ReplyQueue);
+			var requestAdapter = new MsmqRequestorAdapter(RequestQueue, ReplyQueue);
 
 			// ReSharper disable once UnusedVariable
 			// нужен неявно, так как в конструкторе подписывается на событие прихода сообщения в очередь и обрабатывает его.
-			MsmqAdapters.MsmqReplierAdapter replierAdapter = new MsmqAdapters.MsmqReplierAdapter(RequestQueue, InvalidQueue, new Agent());
+			var replierAdapter = new MsmqAdapters.MsmqReplierAdapter(RequestQueue, InvalidQueue, new Agent());
 
 			string start = "0";
 			int finish = 500;
@@ -38,7 +38,7 @@ namespace Agent.Tests
 		[Test]
 		public void InvalidMessage()
 		{
-			MsmqRequestorAdapter requestAdapter = new MsmqRequestorAdapter(RequestQueue, ReplyQueue);
+			var requestAdapter = new MsmqRequestorAdapter(RequestQueue, ReplyQueue);
 
 			// ReSharper disable once UnusedVariable
 			// нужен неявно, так как в конструкторе подписывается на событие прихода сообщения в очередь и обрабатывает его.
@@ -53,7 +53,7 @@ namespace Agent.Tests
 			string[] hashArr = { hash };
 
 			string id = requestAdapter.Send(start, finish, hashArr);
-			Message message = requestAdapter.ReceiveSync();
+			var message = requestAdapter.ReceiveSync();
 
 			Assert.That(id, Is.EqualTo(message.CorrelationId));
 			Assert.That(hash + " " + str, Is.EqualTo(message.Body.ToString()));

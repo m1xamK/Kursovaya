@@ -16,28 +16,7 @@ namespace Agent
         //    'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
         //    'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'
         };
-
-		///// <summary>
-		///// Главная функция, обрабатывает сообщение и возвращает список из пар "хэш"-"пароль"
-		///// </summary>
-		///// <param name="message"></param>
-		///// <returns></returns>
-		//public List<KeyValuePair<string, string>> Calculate(string message)
-		//{
-		//	var messageInfo = message.Split(' ');
-
-		//	int num = Convert.ToInt32(messageInfo[0]);
-		//	string from = FromNumToWord(num);
-		//	int count = Convert.ToInt32(messageInfo[1]);
-
-		//	List<string> hashSumList = new List<string>();
-		//	for (int i = 2; i < messageInfo.Length; ++i)
-		//		hashSumList.Add(messageInfo[i]);
-
-		//	// находим совпадения.
-		//	return SearchPassword(from, count, hashSumList);
-		//}
-
+		
 	    /// <summary>
 		/// Ищет пароли чьи свертки лежат в hashSumList
 	    /// </summary>
@@ -72,7 +51,7 @@ namespace Agent
         }
 
         /// <summary>
-        /// ищется строковое представление md5 от строки.
+        /// Ищется строковое представление md5 от строки.
         /// </summary>
         /// <param name="input"> пароль </param>
         /// <returns></returns>
@@ -96,30 +75,33 @@ namespace Agent
         {
 			int len = str.Length;
 			char lastSymb = str[len - 1];
-            // если последняя буква бегунка -- последняя буква алфавита -- 
+
+            // Если последняя буква бегунка последняя буква алфавита.
             if (lastSymb == _alphabet.Last())
             {
-                // дошли до начала, прошли весь цикл
+                // Дошли до начала, прошли весь цикл.
                 if (len == 1)
                 {
-					str.Replace(lastSymb, 'a', 0, 1);
-					str.Append('a');
+					str.Replace(lastSymb, _alphabet.First(), 0, 1);
+					str.Append(_alphabet.First());
                 }
                 // меняем последнюю букву
                 else
                 {
 					str.Remove(len - 1, 1);
 					NextSymb(ref str);
-					str.Append('a');
+					str.Append(_alphabet.First());
                 }
 
             }
             else
             {
-                int ind = Array.IndexOf(_alphabet, lastSymb); // индекс текущего последнего элемента комбинации
+                int ind = Array.IndexOf(_alphabet, lastSymb); // Индекс текущего последнего элемента комбинации
                 lastSymb = _alphabet[ind + 1];
+
+				// Заменяем на следующий символ.
 				str.Remove(len - 1, 1);
-				str.Append(lastSymb); // заменяем на следующий символ
+				str.Append(lastSymb);
             }
         }
 		
