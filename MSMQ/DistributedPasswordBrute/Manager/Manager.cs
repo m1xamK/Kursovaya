@@ -1,5 +1,6 @@
 ﻿using System;
 ﻿using System.Collections.Generic;
+using System.Text;
 using MsmqAdapters;
 
 namespace Manager
@@ -28,14 +29,11 @@ namespace Manager
     {
 		//Наверное надо брать константы из файла конфига или как-то задавать, крч надо подумать а пока и так сойдет
 
-		//количетво бук в алфавите
-		public const int AlphabetSize = 36;
-
-		//предполагаемое количестао символов в будующей подюорке
+		//предполагаемое количестао символов в будующей подборке
 		public const int QantityOfSymbols = 3;
 
-		//кол-во комбинаций, которые нужно проверить, отправляемые в одном сообщениии
-		public const int Step = 200;
+		//алфавит, из которого может состоять hash
+		public const string Alphabet = "0123456789abcdefghijklmnopqrstuvwxyz"; 
 
 		//Сколько в очереди может быть одновременно сообщений
 		public const int MsgInQueue = 10;
@@ -49,9 +47,6 @@ namespace Manager
 		//храним пару - md5 комбинация и ответ на нее, для которых мы узнали
 		private Dictionary<string, string> _resultHashAnswer;
 
-		//Сколько у нас различных комбинаций строк из К символов
-		public int Count { get; private set; }
-
 		//конец последнего диапазона, отправленого для просчета агенту
 		public string PreviosEnd { get; private set; }
 
@@ -62,7 +57,6 @@ namespace Manager
         /// <param name="replyResourсe"></param>
         public Manager(string requestResource, string replyResourсe)
 		{
-			Count = (int)Math.Pow(AlphabetSize, QantityOfSymbols);
 			PreviosEnd = "0";
 			_msgList = new Dictionary<string, MsgInProcess>();
 			_sender = new MsmqRequestorAdapter(requestResource, replyResourсe);
@@ -73,9 +67,9 @@ namespace Manager
 		/// <summary>
 		/// отправка сообщения агенту 
 		/// </summary>
-		/// <param name="count"></param>
-		/// <param name="hash">md5 свертки</param>
 		/// <param name="start"></param>
+		/// <param name="end"></param>
+		/// <param name="hash">md5 свертки</param>
 		void Send(string start, string end, string[] hash)
 		{
 			//отправляем сообщение агенту через какое либо средство обмена сообщениями
@@ -94,11 +88,30 @@ namespace Manager
 		{
 			for (int i = 0; i < MsgInQueue; ++i)
 			{
-				Send(PreviosEnd, Step, hashs);
-				PreviosEnd += Step;
+				string finish = NextWord(PreviosEnd);
+
+				Send(PreviosEnd, finish, hashs);
+
+				PreviosEnd = finish;
 			}
 
 			return "";
+		}
+
+		string NextWord(string word)
+		{
+			if (word[0] == 'z')
+			{
+				word = word.Replace('z', '1');
+				word = word.Insert(word.Length, "0");
+				return word;
+			}
+
+			int index = Alphabet.IndexOf(word[0]);
+
+			word = word.Replace(word[0], Alphabet[++index]);
+
+			return word;
 		}
 
 		//отправляем сообщение на основе предыдущего
@@ -109,9 +122,11 @@ namespace Manager
 
 			var msg = _msgList[msgId];
 
-			Send(PreviosEnd, Step, msg.Hashs);
+			string finish = NextWord(PreviosEnd);
 
-			PreviosEnd += Step;//сохраняем конец, отправленого диапазона 
+			Send(PreviosEnd, finish, msg.Hashs);
+
+			PreviosEnd = finish; //сохраняем конец, отправленого диапазона 
 		}
 
 		public void ReciveSync()  // changed by m1xamk void -> string

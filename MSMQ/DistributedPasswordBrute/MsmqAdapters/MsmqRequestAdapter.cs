@@ -47,17 +47,17 @@ namespace MsmqAdapters
             ((XmlMessageFormatter)_replyQueue.Formatter).TargetTypeNames = new string[] { "System.String" };
         }
 
-        /// <summary>
-        /// Отправляет сообщение
-        /// </summary>
-        /// <param name="start"></param>
-        /// <param name="count"></param>
-        /// <param name="hashSumArr"></param>
-        public string Send(string start, int count, string[] hashSumArr)
+	    /// <summary>
+	    /// Отправляет сообщение
+	    /// </summary>
+	    /// <param name="start"></param>
+	    /// <param name="finish"></param>
+	    /// <param name="hashSumArr"></param>
+	    public string Send(string start, string finish, string[] hashSumArr)
         {
             Message requestMessage = new Message();
 
-	        string msgBody = start + " " + count;
+			string msgBody = start + " " + finish;
 
             foreach (var hash in hashSumArr)
             {
