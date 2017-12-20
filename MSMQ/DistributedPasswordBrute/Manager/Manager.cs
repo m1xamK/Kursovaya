@@ -10,11 +10,11 @@ namespace Manager
 	/// </summary>
 	public class MsgInProcess
 	{
-		public KeyValuePair<int, int> Range { get; private set; }
+		public KeyValuePair<string, string> Range { get; private set; }
 		public DateTime Time { get; private set; }
 		public string[] Hashs { get; private set; }
 
-		public MsgInProcess(string[] hashs, KeyValuePair<int, int> range, DateTime time)
+		public MsgInProcess(string[] hashs, KeyValuePair<string, string> range, DateTime time)
 		{
 			Hashs = hashs;
 			Range = range;
@@ -54,7 +54,7 @@ namespace Manager
 		public int Count { get; private set; }
 
 		//конец последнего диапазона, отправленого для просчета агенту
-		public int PreviosEnd { get; private set; }
+		public string PreviosEnd { get; private set; }
 
 		/// <summary>
 		/// указываем пути до ресурсов обмена
@@ -64,7 +64,7 @@ namespace Manager
         public Manager(string requestResource, string replyResourсe)
 		{
 			Count = (int)Math.Pow(AlphabetSize, QantityOfSymbols);
-			PreviosEnd = 0;
+			PreviosEnd = "0";
 			_msgList = new Dictionary<string, MsgInProcess>();
 			_sender = new MsmqRequestorAdapter(requestResource, replyResourсe);
 			_resultHashAnswer = new Dictionary<string, string>();
@@ -77,19 +77,19 @@ namespace Manager
 		/// <param name="count"></param>
 		/// <param name="hash">md5 свертки</param>
 		/// <param name="start"></param>
-		void Send(int start, int count, string[] hash)
+		void Send(string start, string end, string[] hash)
 		{
 			//отправляем сообщение агенту через какое либо средство обмена сообщениями
-			var msdId = _sender.Send(start.ToString(), count, hash);
+			var msdId = _sender.Send(start, end, hash);
 
 			//отправляем сообщние в обрабатываемые
-			_msgList.Add(msdId, new MsgInProcess(hash, new KeyValuePair<int, int>(start, count), DateTime.Now));
+			_msgList.Add(msdId, new MsgInProcess(hash, new KeyValuePair<string, string>(start, end), DateTime.Now));
 		}
 
 		/// <summary>
 		/// заполняем очередь сообщений
 		/// </summary>
-		/// <param name="hash"></param>
+		/// <param name="hashs"></param>
 		/// <returns></returns>
 		public string FindHash(string[] hashs)
 		{
@@ -105,7 +105,7 @@ namespace Manager
 		//отправляем сообщение на основе предыдущего
 		public void NextMsgSend(string msgId)
 		{
-			if (PreviosEnd > Count)
+			if (String.Compare(PreviosEnd, "zzzzzz", StringComparison.Ordinal) < 0)
 				return;
 
 			var msg = _msgList[msgId];
@@ -148,7 +148,7 @@ namespace Manager
 				if (msgInProcess.Value.Time.Ticks - DateTime.Now.Ticks > 10000)
 				{
 					Send(msgInProcess.Value.Range.Key, msgInProcess.Value.Range.Value, msgInProcess.Value.Hashs);
-
+ 
 					_msgList.Remove(msgInProcess.Key);
 				}
 			}
