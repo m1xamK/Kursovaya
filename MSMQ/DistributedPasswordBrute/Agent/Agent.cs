@@ -34,8 +34,6 @@ namespace Agent
             for (int i = 2; i < messageInfo.Length; ++i)
                 hashSumList.Add(messageInfo[i]);
 
-            //string to = FromNumToWord(FromWordToNum(from) + count);
-
             // находим совпадения.
             return SearchPassword(from, count, hashSumList);
         }
@@ -55,7 +53,7 @@ namespace Agent
 
             StringBuilder runner = new StringBuilder(from); // строка для которой генерируется хеш в цикле
             int beginSize = from.Length;
-            char lastSymb = (beginSize > 0) ? from[beginSize - 1] : '0';		// WTF ?!
+            char lastSymb = (beginSize > 0) ? from[beginSize - 1] : '0';
 
 
             // основной цикл, здесь происходит подбор паролей от и до
@@ -86,9 +84,8 @@ namespace Agent
             byte[] bytes = md5Provider.ComputeHash(new UTF8Encoding().GetBytes(input));
 
             foreach (byte t in bytes)
-            {
                 hash.Append(t.ToString("x2"));
-            }
+            
             return hash.ToString();
         }
 

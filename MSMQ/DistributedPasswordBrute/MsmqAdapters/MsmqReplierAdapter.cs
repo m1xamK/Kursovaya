@@ -13,13 +13,14 @@ namespace MsmqAdapters
         private readonly MessageQueue _invalidQueue;
         private readonly Agent.Agent _agent;
 
-        /// <summary>
-        /// Для инициализации объекта MsmqReplierAdapter следует передать имена очереди запросов и очереди сообщений недопустимого формата
-        /// объект очереди ответов указывается с помощью "обратного адреса" сообзения с запросом.
-        /// </summary>
-        /// <param name="requestQueueName">имя очереди запросов</param>
-        /// <param name="invalidQueueName">имя очереди сообщений недопустимого формата</param>
-        public MsmqReplierAdapter(String requestQueueName, String invalidQueueName, Agent.Agent agent)
+	    /// <summary>
+	    /// Для инициализации объекта MsmqReplierAdapter следует передать имена очереди запросов и очереди сообщений недопустимого формата
+	    /// объект очереди ответов указывается с помощью "обратного адреса" сообзения с запросом.
+	    /// </summary>
+	    /// <param name="requestQueueName">имя очереди запросов</param>
+	    /// <param name="invalidQueueName">имя очереди сообщений недопустимого формата</param>
+	    /// <param name="agent">экземпляр класса предназначенный непосредственно для обработки сообщения</param>
+	    public MsmqReplierAdapter(String requestQueueName, String invalidQueueName, Agent.Agent agent)
         {
             _agent = agent;
             
@@ -52,7 +53,6 @@ namespace MsmqAdapters
 
             try
             {
-                StringBuilder resultStr = new StringBuilder();
                 Console.WriteLine("Received request");
                 Console.WriteLine("Time:\t{0}", DateTime.Now.ToString("HH:mm:ss"));
                 Console.WriteLine("Message ID:\t{0}", requestMessage.Id);
