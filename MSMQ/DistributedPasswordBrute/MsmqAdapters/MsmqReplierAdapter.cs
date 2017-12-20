@@ -52,7 +52,7 @@ namespace MsmqAdapters
 
             try
             {
-				//Console.WriteLine("Received request");
+				Console.WriteLine("Received request");
 				//Console.WriteLine("Time:\t{0}", DateTime.Now.ToString("HH:mm:ss"));
 				//Console.WriteLine("Message ID:\t{0}", requestMessage.Id);
 				//Console.WriteLine(requestMessage.Body);
@@ -69,7 +69,7 @@ namespace MsmqAdapters
 				for (int i = 2; i < messageInfo.Length; ++i)
 					hashSumList.Add(messageInfo[i]);
 
-				// Найходим пароли
+				// Находим пароли
                 List<KeyValuePair<string, string>> passwdList = _agent.SearchPassword(start, finish, hashSumList);
                 
                 // Реализация "обратного адреса"
@@ -80,7 +80,8 @@ namespace MsmqAdapters
 
 				string str = "";
                 if (passwdList.Count != 0)
-                {	
+                {
+					Console.WriteLine("\t FIND!");
 	                foreach (var pair in passwdList)
 		                str += pair.Key + " " + pair.Value + " ";
 

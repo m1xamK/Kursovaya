@@ -24,9 +24,6 @@ namespace ManagerRepresentor
 
                     case ("start"):	//Инициализиция вычислений.
                         managerRepresentor.StartCalculation();
-		                while (managerRepresentor.CalcultationFlag) ;
-                        
-                       
                         
                         break;
 

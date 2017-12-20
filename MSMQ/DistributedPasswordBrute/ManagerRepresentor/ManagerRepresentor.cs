@@ -46,13 +46,13 @@ namespace ManagerRepresentor
             CalcultationFlag = true;//Установка флага произведения вычислений.
             _manager.FindHash(_hashList.ToArray<string>());//Инициализация вычислений.
 
-	        bool flag = true;
-			while (flag)
+	        string strFlag = "";
+			while (strFlag == "")
 			{
-				flag = _manager.ReciveSync();	//Приостанавливаем работу основного потока пока идут вычисления.
+				strFlag = _manager.ReciveSync();
 			}
 
-            _hashList.Clear();//После окончания вычислений отчистка _hashList.
+            _hashList.Clear();	//После окончания вычислений отчистка _hashList.
             return true;
         }
     }

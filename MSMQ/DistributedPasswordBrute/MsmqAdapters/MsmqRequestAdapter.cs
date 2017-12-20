@@ -74,7 +74,7 @@ namespace MsmqAdapters
 			_requestQueue.Send(requestMessage);
 
             // для дебага
-			//Console.WriteLine("Sent request message");
+			Console.WriteLine("Sent request message");
 			//Console.WriteLine("Message ID: {0}", requestMessage.Id);
 			//Console.WriteLine("Reply to: {0}", requestMessage.ResponseQueue.Path);
 			//Console.WriteLine("Message Body: {0}",requestMessage.Body);

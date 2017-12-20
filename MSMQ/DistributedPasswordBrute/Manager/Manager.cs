@@ -1,6 +1,5 @@
 ﻿using System;
 ﻿using System.Collections.Generic;
-using System.Text;
 using MsmqAdapters;
 
 namespace Manager
@@ -27,8 +26,6 @@ namespace Manager
 	/// </summary>
 	public class Manager
     {
-		//Наверное надо брать константы из файла конфига или как-то задавать, крч надо подумать а пока и так сойдет
-
 		//предполагаемое количестао символов в будующей подборке
 		public const int QantityOfSymbols = 3;
 
@@ -44,6 +41,9 @@ namespace Manager
 		//храним пару - md5 комбинация и ответ на нее, для которых мы узнали
 		private Dictionary<string, string> _resultHashAnswer;
 
+		// Количество хешей, для которых ищем пароли
+		private int _hashCount = 0;
+
 		//конец последнего диапазона, отправленого для просчета агенту
 		public string PreviosEnd { get; private set; }
 
@@ -54,11 +54,10 @@ namespace Manager
         /// <param name="replyResourсe"></param>
         public Manager(string requestResource, string replyResourсe)
 		{
-			PreviosEnd = "1000";
+			PreviosEnd = "0";
 			_msgList = new Dictionary<string, MsgInProcess>();
 			_sender = new MsmqRequestorAdapter(requestResource, replyResourсe);
 			_resultHashAnswer = new Dictionary<string, string>();
-			_msgList = new Dictionary<string, MsgInProcess>();
 		}
 
 		/// <summary>
@@ -80,9 +79,9 @@ namespace Manager
 		/// заполняем очередь сообщений
 		/// </summary>
 		/// <param name="hashs"></param>
-		/// <returns></returns>
-		public string FindHash(string[] hashs)
+		public void FindHash(string[] hashs)
 		{
+			_hashCount = hashs.Length;
 			for (int i = 0; i < MsgInQueue; ++i)
 			{
 				string finish = NextWord.Get(PreviosEnd);
@@ -91,11 +90,9 @@ namespace Manager
 
 				PreviosEnd = finish;
 			}
-
-			return "";
 		}
 
-		//отправляем сообщение на основе предыдущего
+		// Отправляем сообщение на основе предыдущего
 		public void NextMsgSend(string msgId)
 		{
 			if (String.Compare(PreviosEnd, "zzzzzz", StringComparison.Ordinal) > 0)
@@ -110,14 +107,14 @@ namespace Manager
 			PreviosEnd = finish; //сохраняем конец, отправленого диапазона 
 		}
 
-		public bool ReciveSync()  // changed by m1xamk void -> string
+		public string ReciveSync() 
 		{
 			var message = _sender.ReceiveSync();
 
 			if (message == null)
-				return true;
+				return "";
 			
-			//если у агента получилось посчитать ответ хоть на один hash
+			//если у агента получилось посчитать ответ хоть на один хеш
 			if (message.Body.ToString() != "")
 			{
 				var messageBody = message.Body.ToString();
@@ -126,12 +123,13 @@ namespace Manager
 
 				for (int i = 0; i < pairs.Length - 1; i += 2)
 				{
-					Console.WriteLine("\t pair of md5 and password :" + pairs[i] + " "+ pairs[i + 1] + "\n");
+					--_hashCount;
+					
+					// for debug
+					//Console.WriteLine("\t pair of md5 and password :" + pairs[i] + " "+ pairs[i + 1] + "\n");
 
 					if (!_resultHashAnswer.ContainsKey(pairs[i]))
 						_resultHashAnswer.Add(pairs[i], pairs[i + 1]);
-
-					Console.WriteLine("\t Misha is pidor \n");
 				}
 			}
 
@@ -150,17 +148,16 @@ namespace Manager
 				}
 			}
 
-			if (_msgList.Count == 0)
+			if (_msgList.Count == 0 || _hashCount == 0)
 			{
+				var resultStr = "";
 				foreach (var pair in _resultHashAnswer)
-					Console.WriteLine("\t pair of md5 and password :" + pair.Key + "\t" + pair.Value + "\n");
-
-				Console.WriteLine("\t Denis is pidor \n");
-
-				return false;
+					resultStr += "\t pair of md5 and password :" + pair.Key + "\t" + pair.Value + "\n";
+				
+				return resultStr;
 			}
 
-			return true;
+			return "";
 		}
 
     }
