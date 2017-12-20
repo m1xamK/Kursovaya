@@ -24,10 +24,10 @@ namespace ManagerRepresentor
 
                     case ("start"):	//Инициализиция вычислений.
                         managerRepresentor.StartCalculation();
-                        while (managerRepresentor.CalcultationFlag)
-                        { 
-                            System.Threading.Thread.Sleep(300);//Приостанавливаем работу основного потока пока идут вычисления.
-                        }
+		                while (managerRepresentor.CalcultationFlag) ;
+                        
+                       
+                        
                         break;
 
                     case ("add_hash"): //Добавляет хеш сумму введенную в консоли(add_hash hash).

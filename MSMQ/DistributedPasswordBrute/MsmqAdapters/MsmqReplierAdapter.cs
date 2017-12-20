@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Messaging;
-using System.Text;
 
 namespace MsmqAdapters
 {
@@ -15,7 +14,7 @@ namespace MsmqAdapters
 
 	    /// <summary>
 	    /// Для инициализации объекта MsmqReplierAdapter следует передать имена очереди запросов и очереди сообщений недопустимого формата
-	    /// объект очереди ответов указывается с помощью "обратного адреса" сообзения с запросом.
+	    /// объект очереди ответов указывается с помощью "обратного адреса" сообщения с запросом.
 	    /// </summary>
 	    /// <param name="requestQueueName">имя очереди запросов</param>
 	    /// <param name="invalidQueueName">имя очереди сообщений недопустимого формата</param>
@@ -29,7 +28,7 @@ namespace MsmqAdapters
             _invalidQueue = !MessageQueue.Exists(requestQueueName) ? MessageQueue.Create(invalidQueueName) : new MessageQueue(invalidQueueName);
 
             requestQueue.MessageReadPropertyFilter.SetAll();
-            ((XmlMessageFormatter)requestQueue.Formatter).TargetTypeNames = new string[] { "System.String" };
+            ((XmlMessageFormatter)requestQueue.Formatter).TargetTypeNames = new[] { "System.String" };
 
             // Создаем экземпляр делегата ReceiveCompletedEventHandler
             // Система сообщений будет автоматически вызывать метод OnReceiveCompleted при поступлении нового сообщения в очередь
@@ -53,10 +52,10 @@ namespace MsmqAdapters
 
             try
             {
-                Console.WriteLine("Received request");
-                Console.WriteLine("Time:\t{0}", DateTime.Now.ToString("HH:mm:ss"));
-                Console.WriteLine("Message ID:\t{0}", requestMessage.Id);
-                Console.WriteLine(requestMessage.Body);
+				//Console.WriteLine("Received request");
+				//Console.WriteLine("Time:\t{0}", DateTime.Now.ToString("HH:mm:ss"));
+				//Console.WriteLine("Message ID:\t{0}", requestMessage.Id);
+				//Console.WriteLine(requestMessage.Body);
 
                 string messageBody = requestMessage.Body.ToString();
 
@@ -81,9 +80,7 @@ namespace MsmqAdapters
 
 				string str = "";
                 if (passwdList.Count != 0)
-                {
-					Console.WriteLine("\tFIND!!!");
-					
+                {	
 	                foreach (var pair in passwdList)
 		                str += pair.Key + " " + pair.Value + " ";
 
@@ -95,23 +92,15 @@ namespace MsmqAdapters
 
                 // Отправляем сообщение
                 replyQueue.Send(replyMessage);
-
-                Console.WriteLine("Message sent\n");
             }
             // Если пришел объект не типа Message или отсутствует обратный адрес, то попадаем сюда.
             catch (Exception)
             {
-                StringBuilder resultStr = new StringBuilder();
-                Console.WriteLine("Invalid message!");
-                Console.WriteLine("Time:\t{0}", DateTime.Now.ToString("HH:mm:ss"));
-                Console.WriteLine("Message ID:\t{0}", requestMessage.Id);
-
                 requestMessage.CorrelationId = requestMessage.Id;
 
                 _invalidQueue.Send(requestMessage);
-
-                Console.WriteLine("Message sent to invalid message queue\n");
             }
+
             // Снова переходим в режим ожидания.
             requestQueue.BeginReceive();
         }

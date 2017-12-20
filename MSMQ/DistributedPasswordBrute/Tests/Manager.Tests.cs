@@ -37,5 +37,13 @@ namespace Agent.Tests
 
 			Assert.That("1000", Is.EqualTo(res));
 		}
+
+		[Test]
+		public void NextWordTestFive()
+		{
+			string res = NextWord.Get("a000");
+
+			Assert.That("b000", Is.EqualTo(res));
+		}
 	}
 }

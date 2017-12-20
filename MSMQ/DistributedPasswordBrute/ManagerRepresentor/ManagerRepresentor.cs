@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 
 namespace ManagerRepresentor
 {
     class ManagerRepresentor
     {
-
         private readonly Manager.Manager _manager;
         private readonly List<string> _hashList;
         public bool CalcultationFlag;
+
         /// <summary>
         /// Конструктор класса ManagerRepresentor.
         /// </summary>
@@ -44,7 +45,13 @@ namespace ManagerRepresentor
             }
             CalcultationFlag = true;//Установка флага произведения вычислений.
             _manager.FindHash(_hashList.ToArray<string>());//Инициализация вычислений.
-            _manager.ReciveSync();
+
+	        bool flag = true;
+			while (flag)
+			{
+				flag = _manager.ReciveSync();	//Приостанавливаем работу основного потока пока идут вычисления.
+			}
+
             _hashList.Clear();//После окончания вычислений отчистка _hashList.
             return true;
         }

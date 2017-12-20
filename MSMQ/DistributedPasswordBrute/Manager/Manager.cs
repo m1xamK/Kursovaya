@@ -98,7 +98,7 @@ namespace Manager
 		//отправляем сообщение на основе предыдущего
 		public void NextMsgSend(string msgId)
 		{
-			if (String.Compare(PreviosEnd, "zzzzzz", StringComparison.Ordinal) < 0)
+			if (String.Compare(PreviosEnd, "zzzzzz", StringComparison.Ordinal) > 0)
 				return;
 
 			var msg = _msgList[msgId];
@@ -110,15 +110,15 @@ namespace Manager
 			PreviosEnd = finish; //сохраняем конец, отправленого диапазона 
 		}
 
-		public void ReciveSync()  // changed by m1xamk void -> string
+		public bool ReciveSync()  // changed by m1xamk void -> string
 		{
 			var message = _sender.ReceiveSync();
 
 			if (message == null)
-				return ;
+				return true;
 			
 			//если у агента получилось посчитать ответ хоть на один hash
-			if (message.Body.ToString() != "") //я хз какое условие
+			if (message.Body.ToString() != "")
 			{
 				var messageBody = message.Body.ToString();
 
@@ -130,6 +130,8 @@ namespace Manager
 
 					if (!_resultHashAnswer.ContainsKey(pairs[i]))
 						_resultHashAnswer.Add(pairs[i], pairs[i + 1]);
+
+					Console.WriteLine("\t Misha is pidor \n");
 				}
 			}
 
@@ -151,14 +153,14 @@ namespace Manager
 			if (_msgList.Count == 0)
 			{
 				foreach (var pair in _resultHashAnswer)
-					Console.WriteLine("\t pair of md5 and password :" + pair.Key + "\t"+ pair.Value + "\n");
+					Console.WriteLine("\t pair of md5 and password :" + pair.Key + "\t" + pair.Value + "\n");
 
-				Console.WriteLine("\t Misha is pidor \n");
+				Console.WriteLine("\t Denis is pidor \n");
 
-				return;
+				return false;
 			}
-				
-			ReciveSync();
+
+			return true;
 		}
 
     }

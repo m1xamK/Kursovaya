@@ -74,10 +74,11 @@ namespace MsmqAdapters
 			_requestQueue.Send(requestMessage);
 
             // для дебага
-            Console.WriteLine("Sent request message");
-            Console.WriteLine("Message ID: {0}", requestMessage.Id);
-            Console.WriteLine("Reply to: {0}", requestMessage.ResponseQueue.Path);
-            Console.WriteLine("Message Body: {0}",requestMessage.Body);
+			//Console.WriteLine("Sent request message");
+			//Console.WriteLine("Message ID: {0}", requestMessage.Id);
+			//Console.WriteLine("Reply to: {0}", requestMessage.ResponseQueue.Path);
+			//Console.WriteLine("Message Body: {0}",requestMessage.Body);
+			Console.WriteLine(start + "\n");
             
             return requestMessage.Id;
         }
@@ -90,10 +91,10 @@ namespace MsmqAdapters
                 return null;
             
             // для дебага
-            Console.WriteLine("Received reply");
-            Console.WriteLine("Message ID:" + replyMessage.Id);
-            Console.WriteLine("Message Correlation ID:" + replyMessage.CorrelationId);
-            Console.WriteLine("Message Body:" + replyMessage.Body.ToString() + "\n");
+			//Console.WriteLine("Received reply");
+			//Console.WriteLine("Message ID:" + replyMessage.Id);
+			//Console.WriteLine("Message Correlation ID:" + replyMessage.CorrelationId);
+			//Console.WriteLine("Message Body:" + replyMessage.Body.ToString() + "\n");
 
             return replyMessage;
         }
