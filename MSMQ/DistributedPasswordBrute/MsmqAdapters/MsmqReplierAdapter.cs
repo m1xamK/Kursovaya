@@ -59,7 +59,19 @@ namespace MsmqAdapters
                 Console.WriteLine(requestMessage.Body);
 
                 string messageBody = requestMessage.Body.ToString();
-                List<KeyValuePair<string, string>> passwdList = _agent.Calculate(messageBody);
+
+				// Разбор сообщения
+				var messageInfo = messageBody.Split(' ');
+
+				string start = messageInfo[0];
+				string finish = messageInfo[1];
+
+				List<string> hashSumList = new List<string>();
+				for (int i = 2; i < messageInfo.Length; ++i)
+					hashSumList.Add(messageInfo[i]);
+
+				// Найходим пароли
+                List<KeyValuePair<string, string>> passwdList = _agent.SearchPassword(start, finish, hashSumList);
                 
                 // Реализация "обратного адреса"
                 MessageQueue replyQueue = requestMessage.ResponseQueue;
@@ -103,5 +115,20 @@ namespace MsmqAdapters
             // Снова переходим в режим ожидания.
             requestQueue.BeginReceive();
         }
+
+	    private string[] ParseMessage(string str)
+	    {
+			var messageInfo = str.Split(' ');
+
+			string start = messageInfo[0];
+			string finish = messageInfo[1];
+			
+			List<string> hashSumList = new List<string>();
+			for (int i = 2; i < messageInfo.Length; ++i)
+				hashSumList.Add(messageInfo[i]);
+
+			// находим совпадения.
+			return SearchPassword(from, count, hashSumList);
+	    }
     }
 }
