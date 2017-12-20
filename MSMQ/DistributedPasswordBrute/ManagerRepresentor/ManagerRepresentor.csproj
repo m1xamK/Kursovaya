@@ -37,7 +37,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ManagerRepresentor.cs" />
-    <Compile Include="Program.cs" />
+    <Compile Include="ManagerRepresentorConsole.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
