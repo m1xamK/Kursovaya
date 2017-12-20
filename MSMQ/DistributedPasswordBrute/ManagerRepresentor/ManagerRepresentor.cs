@@ -35,16 +35,14 @@ namespace ManagerRepresentor
         /// <summary>
         /// Инициализирует процесс вычисления пароля для List'а хеш сумм.
         /// </summary>
-        /// <returns></returns>
-        public bool StartCalculation()
+        /// <returns>Строковое представление найденных: хешей паролей</returns>
+        public string StartCalculation()
         {
             if (_hashList.Count == 0)
-            {
-                Console.WriteLine("Нет хеш сумм для проверки");
-                return false;
-            }
-            CalcultationFlag = true;//Установка флага произведения вычислений.
-            _manager.FindHash(_hashList.ToArray<string>());//Инициализация вычислений.
+               return "Нет хеш сумм для проверки";
+            
+            CalcultationFlag = true;	//Установка флага произведения вычислений.
+            _manager.FindHash(_hashList.ToArray<string>());	//Инициализация вычислений.
 
 	        string strFlag = "";
 			while (strFlag == "")
@@ -53,7 +51,7 @@ namespace ManagerRepresentor
 			}
 
             _hashList.Clear();	//После окончания вычислений отчистка _hashList.
-            return true;
+			return strFlag;
         }
     }
 }

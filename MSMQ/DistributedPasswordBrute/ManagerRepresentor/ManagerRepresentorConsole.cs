@@ -23,7 +23,7 @@ namespace ManagerRepresentor
                         return ;
 
                     case ("start"):	//Инициализиция вычислений.
-                        managerRepresentor.StartCalculation();
+                        Console.WriteLine(managerRepresentor.StartCalculation());
                         
                         break;
 

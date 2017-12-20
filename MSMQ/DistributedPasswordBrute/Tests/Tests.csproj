@@ -39,14 +39,14 @@
     <Reference Include="System.Messaging" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Agent.Test.cs" />
+    <Compile Include="Agent_Test.cs" />
     <Compile Include="Manager.Tests.cs" />
     <Compile Include="MsmqRequestAdapter.Tests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Agent\Agent.csproj">
-      <Project>{cc354fed-b083-4234-b9b6-95c5375af8cb}</Project>
+      <Project>{29662A2B-F083-49DD-A074-65EE816B3FB2}</Project>
       <Name>Agent</Name>
     </ProjectReference>
     <ProjectReference Include="..\ManagerRepresentor\ManagerRepresentor.csproj">
