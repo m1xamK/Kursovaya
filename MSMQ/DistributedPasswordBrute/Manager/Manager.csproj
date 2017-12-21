@@ -37,7 +37,7 @@
   <ItemGroup>
     <Compile Include="MsgInProcess.cs" />
     <Compile Include="Manager.cs" />
-    <Compile Include="NextDiapazone.cs" />
+    <Compile Include="NextDiapasone.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

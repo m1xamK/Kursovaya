@@ -17,21 +17,7 @@ namespace MsmqAdapters
         public MsmqRequestorAdapter(string requestQueueName, string replyQueueName)
         {
 			_requestQueue = new MessageQueue(requestQueueName);
-			//if (MessageQueue.Exists(requestQueueName))
-			//{
-			//	_requestQueue = new MessageQueue(requestQueueName);
-			//	_requestQueue.Purge();
-			//}
-			//else
-			//	_requestQueue = MessageQueue.Create(requestQueueName);
 			_replyQueue = new MessageQueue(replyQueueName);
-			//if (MessageQueue.Exists(replyQueueName))
-			//{
-			//	_replyQueue = new MessageQueue(replyQueueName);
-			//	_replyQueue.Purge();
-			//}
-			//else
-			//	_replyQueue = MessageQueue.Create(replyQueueName);
 
             // Фильтр для считывания сообщения со всеми свойствами
             _replyQueue.MessageReadPropertyFilter.SetAll();
@@ -89,5 +75,11 @@ namespace MsmqAdapters
 
             return replyMessage;
         }
+
+		// Освобождает ресурсы, выделенные для _replyQueue
+	    public void StopSession()
+	    {
+		    _replyQueue.Close();
+	    }
     }
 }

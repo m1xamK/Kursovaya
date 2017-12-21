@@ -21,30 +21,22 @@ namespace Manager
 	/// </summary>
 	public class Manager
     {
-		//предполагаемое количестао символов в будующей подборке
-		public const int QantityOfSymbols = 3;
-
-		//Сколько в очереди может быть одновременно сообщений
-		public const int MsgInQueue = 10;
-
-		/// некий механизм осуществляющий передачу сообщений до агента
+		/// Механизм осуществляющий передачу сообщений до агента
 		private readonly MsmqRequestorAdapter _sender;
 
-		//сообщения находящиеся в обработке агентами
-		private Dictionary<string, MsgInProcess> _msgList; 
+		// Словарь сообщений, находящихся в обработке агентами
+		private Dictionary<string, MsgInProcess> _msgList;	// словарь типа: {идентификатор сообщения, информация об сообщении}
 
-		//храним пару - md5 комбинация и ответ на нее, для которых мы узнали
+		// Храним пару - md5 комбинация и ответ на нее, для которых мы узнали
 		private Dictionary<string, string> _resultHashAnswer;
 
-		//последняя комбинация которая должна общитаться
+		// Последняя комбинация которая должна быть посчитана
 		private const string LastRange = "zzzzzz";
 
-		// Количество хешей, для которых ищем пароли
-		private int _hashCount;
-
-		//массив общитываемых хешей
+		// Массив хешей, для которых ищем свертки
 		private string[] _hashArr;
 
+		// Событие для вывода логов
         public event EventHandler<LogArgs> LogEvent;
 
         protected virtual void OnLogEvent(LogArgs e)
@@ -77,8 +69,8 @@ namespace Manager
 		/// <summary>
 		/// отправка сообщения агенту 
 		/// </summary>
-		/// <param name="start"></param>
-		/// <param name="end"></param>
+		/// <param name="start">От этой строки начинаем считать хеши</param>
+		/// <param name="end">До этой строки считаем хеш</param>
 		/// <param name="hash">md5 свертки</param>
 		void Send(string start, string end, string[] hash)
 		{
@@ -90,17 +82,19 @@ namespace Manager
 		}
 
 		/// <summary>
-		/// Первоначальное заполнение очереди нашеми сообщениями
+		/// Первоначальное заполнение очереди нашими сообщениями
 		/// </summary>
 		/// <param name="hashs">Хеш свертки, для которых ищем пароли.</param>
 		public void InitialFillingOfTheQueue(string[] hashs)
 		{
-			_hashCount = hashs.Length;
 			_hashArr = hashs;
 
-			for (int i = 0; i < MsgInQueue; ++i)
+			// Сколько добавляем сообщений в очередь
+			const int msgInQueue = 10;
+
+			for (int i = 0; i < msgInQueue; ++i)
 			{
-				string finish = NextDiapazone.Get(PreviousEnd);
+				string finish = NextDiapason.Get(PreviousEnd);
 
 				Send(PreviousEnd, finish, hashs);
 
@@ -117,7 +111,7 @@ namespace Manager
 			if (String.Compare(PreviousEnd, LastRange, StringComparison.Ordinal) > 0)
 				return;
 
-			string finish = NextDiapazone.Get(PreviousEnd);
+			string finish = NextDiapason.Get(PreviousEnd);
 
 			Send(PreviousEnd, finish, _hashArr);
 
@@ -140,7 +134,13 @@ namespace Manager
                 
 			    for (int i = 0; i < pairs.Length - 1; i += 2)
 			    {
-			        --_hashCount;
+					//if (_hashArr.Contains(pairs[i]))
+					//{
+					//	_hashArr.Remove(pairs[i]);
+
+					//	// все остальное
+
+					//}
 
 			        if (!_resultHashAnswer.ContainsKey(pairs[i]))
 			        {
@@ -165,8 +165,13 @@ namespace Manager
 				}
 			}
 
-			if (_msgList.Count == 0 || _hashCount == 0)
+			if (_msgList.Count == 0 || _hashArr.Length == 0)
+			{
+				// Освобождаем ресурсы очереди.
+				_sender.StopSession();
+
 				return _resultHashAnswer.Aggregate("", (current, pair) => current + "pair of md5 and password :" + pair.Key + "\t" + pair.Value + "\n");
+			}
 			
 			return "";
 		}

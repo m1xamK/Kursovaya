@@ -7,10 +7,10 @@ namespace AgentRepresentor
     {
         public static void Main()
         {
-			MsmqReplierAdapter replier = new MsmqReplierAdapter("FormatName:Direct=TCP:192.168.0.102\\private$\\RequestQueue",
-				"FormatName:Direct=TCP:192.168.0.102\\private$\\InvalidQueue", new Agent.Agent());
+	        new MsmqReplierAdapter("FormatName:Direct=TCP:192.168.0.102\\private$\\RequestQueue",
+		        "FormatName:Direct=TCP:192.168.0.102\\private$\\InvalidQueue", new Agent.Agent());
 
-			Console.ReadLine();
+	        Console.ReadLine();
         }
     }
 }
