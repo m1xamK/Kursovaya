@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 
 namespace ManagerRepresentor
 {
@@ -14,8 +12,8 @@ namespace ManagerRepresentor
         /// <summary>
         /// Конструктор класса ManagerRepresentor.
         /// </summary>
-        /// <param name="requestResource"></param>
-        /// <param name="replyResourсe"></param>
+		/// <param name="requestResource">Имя очереди запросов</param>
+		/// <param name="replyResourсe">Имя очереди ответов</param>
         public ManagerRepresentor(string requestResource, string replyResourсe)
         {
             _hashList = new List<string>(); //Инициализация перемееных.
@@ -26,7 +24,7 @@ namespace ManagerRepresentor
         /// Добавляет новый хеш в List.
         /// </summary>
         /// <param name="hash">md5 hash summ</param>
-        /// <returns></returns>
+        /// <returns>true, в случае успеха</returns>
         public bool PushNewHash(string hash)
         {
             _hashList.Add(hash); //Добавление md5 в List.

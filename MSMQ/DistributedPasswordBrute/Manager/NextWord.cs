@@ -4,17 +4,24 @@ namespace Manager
 {
 	public static class NextWord
 	{
-		//алфавит, из которого может состоять hash
+		//алфавит, из которого может состоять хеш
 		public const string Alphabet = "0123456789abcdefghijklmnopqrstuvwxyz";
 
+		/// <summary>
+		/// Функция предназначена для нахождения смещения до которого считаем хеш
+		/// </summary>
+		/// <param name="word">Слово, для которого находим смещение</param>
+		/// <returns>Смещение до которого считаем хеш</returns>
 		public static string Get(string word)
 		{
 			const int minLength = 4;
+			const string tail = "000";
 
 			char lastAlphabetSymbol = Alphabet[Alphabet.Length - 1];
 
+			// Первое смещение
 			if (word.Length < minLength)
-				return "1000";
+				return "1" + tail;
 
 			StringBuilder temp = new StringBuilder(word.Substring(0, word.Length - minLength + 1));
 
@@ -34,7 +41,7 @@ namespace Manager
 					temp = new StringBuilder("1").Append(temp);
 			}
 
-			return temp + "000";
+			return temp + tail;
 		}
 	}
 }

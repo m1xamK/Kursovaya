@@ -76,7 +76,7 @@ namespace Agent.Tests
 	    [Test]
 	    public void TestSeveralPart()
 	    {
-	        string[] passwdArr = { "aac", "bfd", "gfds", "feiodw" };
+	        string[] passwdArr = { "aac", "bfd", "gfds", "feiod" };
 
 	        List<string> hashArr = new List<string>();          // Массив хешей
 	        // Ожидаемый ответ.

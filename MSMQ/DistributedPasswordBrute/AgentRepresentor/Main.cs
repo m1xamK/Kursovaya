@@ -8,14 +8,8 @@ namespace AgentRepresentor
     {
         public static void Main()
         {
-            
-            //string requestQueueName = ".\\Private$\\RequestMessages";
-
-           //MessageQueue myQueue = MessageQueue.Create(requestQueueName);
-            //myQueue.Send("Public queue by path name.");
-            //var requestQueue = MessageQueue.Create(requestQueueName);
-
-            MsmqReplierAdapter replier = new MsmqReplierAdapter(".\\Private$\\RequestQueue", ".\\Private$\\InvalidQueue", new Agent.Agent());
+			MsmqReplierAdapter replier = new MsmqReplierAdapter("DESKTOP-OUP4I3U\\Private$\\RequestQueue",
+				"DESKTOP-OUP4I3U\\Private$\\InvalidQueue", new Agent.Agent());
 
             while (true)
             {

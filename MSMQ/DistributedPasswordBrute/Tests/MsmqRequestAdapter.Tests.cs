@@ -7,54 +7,35 @@ namespace Agent.Tests
 	[TestFixture]
 	class MsmqRequestorAdapterTest
 	{
-		private readonly string RequestQueue = ".\\Private$\\RequestQueue";
-		private readonly string ReplyQueue = ".\\Private$\\ReplyQueue";
-		private readonly string InvalidQueue = ".\\Private$\\InvalidQueue";
+		private readonly string RequestQueue = "DESKTOP-OUP4I3U\\Private$\\RequestQueue";
+		private readonly string ReplyQueue = "DESKTOP-OUP4I3U\\Private$\\ReplyQueue";
+		private readonly string InvalidQueue = "DESKTOP-OUP4I3U\\Private$\\InvalidQueue";
+
+		private Message SendTestMessage(string start, string finish, string[] hashArr)
+		{
+			var requestAdapter = new MsmqRequestorAdapter(RequestQueue, ReplyQueue);
+
+			requestAdapter.Send(start, finish, hashArr);
+			return requestAdapter.ReceiveSync();
+		}
 
 		[Test]
 		public void ValidMessage()
 		{
-			var requestAdapter = new MsmqRequestorAdapter(RequestQueue, ReplyQueue);
-
 			// ReSharper disable once UnusedVariable
 			// нужен неявно, так как в конструкторе подписывается на событие прихода сообщения в очередь и обрабатывает его.
-			var replierAdapter = new MsmqAdapters.MsmqReplierAdapter(RequestQueue, InvalidQueue, new Agent());
+			var replierAdapter = new MsmqReplierAdapter(RequestQueue, InvalidQueue, new Agent());
 
 			string start = "0";
-			string finish = "hi";
+			string finish = "1000";
 
-			string str = "1";
-			var hash = new Agent().Md5Hash(str);
+			string password = "zs";
+			var hash = new Agent().Md5Hash(password);
 			string[] hashArr = { hash };
 
-			string id = requestAdapter.Send(start, finish, hashArr);
-			Message message = requestAdapter.ReceiveSync();
+			var message = SendTestMessage(start, finish, hashArr);
 			
-			Assert.That(id, Is.EqualTo(message.CorrelationId));
-			Assert.That(hash + " " + str, Is.EqualTo(message.Body.ToString()));
-		}
-
-		[Test]
-		public void InvalidMessage()
-		{
-			var requestAdapter = new MsmqRequestorAdapter(RequestQueue, ReplyQueue);
-
-			// ReSharper disable once UnusedVariable
-			// нужен неявно, так как в конструкторе подписывается на событие прихода сообщения в очередь и обрабатывает его.
-			MsmqAdapters.MsmqReplierAdapter replierAdapter = new MsmqAdapters.MsmqReplierAdapter(RequestQueue, InvalidQueue, new Agent());
-
-			string start = "0";
-			string finish = "hi";
-
-			string str = "1";
-			var hash = new Agent().Md5Hash(str);
-			string[] hashArr = { hash };
-
-			string id = requestAdapter.Send(start, finish, hashArr);
-			var message = requestAdapter.ReceiveSync();
-
-			Assert.That(id, Is.EqualTo(message.CorrelationId));
-			Assert.That(hash + " " + str, Is.EqualTo(message.Body.ToString()));
+			Assert.That(hash + " " + password, Is.EqualTo(message.Body.ToString()));
 		}
 	}
 }

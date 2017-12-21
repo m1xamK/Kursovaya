@@ -39,10 +39,10 @@ namespace MsmqAdapters
         }
 
         /// <summary>
-        /// 
+        /// Обрабатывает то что пришло в очередь.
         /// </summary>
-        /// <param name="source"></param>
-        /// <param name="asyncResult"></param>
+        /// <param name="source">Объект из очереди запросов.</param>
+		/// <param name="asyncResult">Объект класса ReceiveCompletedEventArgs</param>
         public void OnReceiveCompleted(Object source, ReceiveCompletedEventArgs asyncResult)
         {
             MessageQueue requestQueue = (MessageQueue)source;
@@ -52,10 +52,7 @@ namespace MsmqAdapters
 
             try
             {
-				Console.WriteLine("Received request");
-				//Console.WriteLine("Time:\t{0}", DateTime.Now.ToString("HH:mm:ss"));
-				//Console.WriteLine("Message ID:\t{0}", requestMessage.Id);
-				//Console.WriteLine(requestMessage.Body);
+				Console.WriteLine("Message ID:\t{0}", requestMessage.Id);				
 
                 string messageBody = requestMessage.Body.ToString();
 
@@ -72,7 +69,7 @@ namespace MsmqAdapters
 				// Находим пароли
                 List<KeyValuePair<string, string>> passwdList = _agent.SearchPassword(start, finish, hashSumList);
                 
-                // Реализация "обратного адреса"
+                // Устанавливаем обратный адрес
                 MessageQueue replyQueue = requestMessage.ResponseQueue;
                 
                 // Формируем новое сообщение
@@ -81,7 +78,6 @@ namespace MsmqAdapters
 				string str = "";
                 if (passwdList.Count != 0)
                 {
-					Console.WriteLine("\t FIND!");
 	                foreach (var pair in passwdList)
 		                str += pair.Key + " " + pair.Value + " ";
 

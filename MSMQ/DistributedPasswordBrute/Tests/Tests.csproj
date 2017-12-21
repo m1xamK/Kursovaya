@@ -39,7 +39,7 @@
     <Reference Include="System.Messaging" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Agent_Test.cs" />
+    <Compile Include="Agent.Test.cs" />
     <Compile Include="Manager.Tests.cs" />
     <Compile Include="MsmqRequestAdapter.Tests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -42,7 +42,9 @@ namespace Manager
 		private Dictionary<string, string> _resultHashAnswer;
 
 		// Количество хешей, для которых ищем пароли
-		private int _hashCount = 0;
+		private int _hashCount;
+
+		private string[] _hashArr;
 
 		//конец последнего диапазона, отправленого для просчета агенту
 		public string PreviosEnd { get; private set; }
@@ -78,10 +80,12 @@ namespace Manager
 		/// <summary>
 		/// заполняем очередь сообщений
 		/// </summary>
-		/// <param name="hashs"></param>
+		/// <param name="hashs">Хеш свертки для которых ищем пароли.</param>
 		public void FindHash(string[] hashs)
 		{
 			_hashCount = hashs.Length;
+			_hashArr = hashs;
+
 			for (int i = 0; i < MsgInQueue; ++i)
 			{
 				string finish = NextWord.Get(PreviosEnd);
@@ -98,11 +102,9 @@ namespace Manager
 			if (String.Compare(PreviosEnd, "zzzzzz", StringComparison.Ordinal) > 0)
 				return;
 
-			var msg = _msgList[msgId];
-
 			string finish = NextWord.Get(PreviosEnd);
 
-			Send(PreviosEnd, finish, msg.Hashs);
+			Send(PreviosEnd, finish, _hashArr);
 
 			PreviosEnd = finish; //сохраняем конец, отправленого диапазона 
 		}
