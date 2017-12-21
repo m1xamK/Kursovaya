@@ -137,9 +137,7 @@ namespace Manager
 				var messageBody = message.Body.ToString();
 
 				var pairs = messageBody.Split(' ');
-                // тут эвент 
                 
-                //
 			    for (int i = 0; i < pairs.Length - 1; i += 2)
 			    {
 			        --_hashCount;

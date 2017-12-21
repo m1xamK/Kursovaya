@@ -9,7 +9,7 @@ namespace ManagerRepresentor
         static void Main()
         {
             Regex regex = new Regex("[0-9a-z]{32}"); //Регулярное выражение проверяющее hash сумму.
-			ManagerRepresentor managerRepresentor = new ManagerRepresentor("FormatName:Direct=TCP:192.168.43.145\\Private$\\RequestQueue", "FormatName:Direct=TCP:192.168.43.145\\Private$\\ReplyQueue");
+			ManagerRepresentor managerRepresentor = new ManagerRepresentor("FormatName:Direct=TCP:192.168.43.145\\private$\\RequestQueue", "FormatName:Direct=TCP:192.168.43.145\\private$\\ReplyQueue");
             while (true)
             {
                 var command = Console.ReadLine();	//Считывание команды с параметрами с консоли

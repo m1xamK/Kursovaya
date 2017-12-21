@@ -23,8 +23,9 @@ namespace MsmqAdapters
         {
             _agent = agent;
             var machineName = Environment.MachineName;
-            MessageQueue requestQueue = !MessageQueue.Exists(requestQueueName) ? MessageQueue.Create(requestQueueName) : new MessageQueue(requestQueueName);
-            _invalidQueue = !MessageQueue.Exists(invalidQueueName) ? MessageQueue.Create(invalidQueueName) : new MessageQueue(invalidQueueName);
+			MessageQueue requestQueue = new MessageQueue(requestQueueName); //!MessageQueue.Exists(requestQueueName) ? MessageQueue.Create(requestQueueName) : new MessageQueue(requestQueueName);
+
+		    _invalidQueue = new MessageQueue(invalidQueueName); //!MessageQueue.Exists(invalidQueueName) ? MessageQueue.Create(invalidQueueName) : new MessageQueue(invalidQueueName);
 
             requestQueue.MessageReadPropertyFilter.SetAll();
             ((XmlMessageFormatter)requestQueue.Formatter).TargetTypeNames = new[] { "System.String" };
