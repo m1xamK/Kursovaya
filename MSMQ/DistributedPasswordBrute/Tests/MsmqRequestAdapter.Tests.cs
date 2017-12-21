@@ -8,9 +8,9 @@ namespace Agent.Tests
 	[TestFixture]
 	class MsmqRequestorAdapterTest
 	{
-		private readonly string RequestQueue = Environment.MachineName+ "\\Private$\\RequestQueue";
-		private readonly string ReplyQueue = Environment.MachineName + "\\Private$\\ReplyQueue";
-		private readonly string InvalidQueue = Environment.MachineName + "\\Private$\\InvalidQueue";
+		private readonly string RequestQueue = "FormatName:Direct=TCP:192.168.43.145\\Private$\\RequestQueue";
+		private readonly string ReplyQueue = "FormatName:Direct=TCP:192.168.43.145\\Private$\\ReplyQueue";
+		private readonly string InvalidQueue = "FormatName:Direct=TCP:192.168.43.145\\Private$\\InvalidQueue";
 
 		private Message SendTestMessage(string start, string finish, string[] hashArr)
 		{

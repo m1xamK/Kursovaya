@@ -35,8 +35,9 @@
     <Reference Include="System.Messaging" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MsgInProcess.cs" />
     <Compile Include="Manager.cs" />
-    <Compile Include="NextWord.cs" />
+    <Compile Include="NextDiapazone.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
