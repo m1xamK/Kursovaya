@@ -24,7 +24,7 @@ namespace MsmqAdapters
 	        else
 		        _requestQueue = MessageQueue.Create(requestQueueName);
 
-	        if (MessageQueue.Exists(requestQueueName))
+            if (MessageQueue.Exists(replyQueueName))
 	        {
 		        _replyQueue = new MessageQueue(replyQueueName);
 		        _replyQueue.Purge();

@@ -5,7 +5,7 @@ using MsmqAdapters;
 namespace Manager
 {
 	/// <summary>
-	/// структура данных, хранящая инфу о комбинациях, находящихся в обработке у агентов
+	/// структура данных, хранящая информацию о комбинациях, находящихся в обработке у агентов
 	/// </summary>
 	public class MsgInProcess
 	{
@@ -52,8 +52,8 @@ namespace Manager
 		/// <summary>
 		/// указываем пути до ресурсов обмена
 		/// </summary>
-        /// <param name="requestResource"></param>
-        /// <param name="replyResourсe"></param>
+        /// <param name="requestResource">имя очереди запросов</param>
+        /// <param name="replyResourсe">имя очереди ответов</param>
         public Manager(string requestResource, string replyResourсe)
 		{
 			PreviosEnd = "0";
@@ -96,7 +96,10 @@ namespace Manager
 			}
 		}
 
-		// Отправляем сообщение на основе предыдущего
+		/// <summary>
+        /// Отправляем сообщение на основе предыдущего
+		/// </summary>
+		/// <param name="msgId">Идентификатор сообщения</param>
 		public void NextMsgSend(string msgId)
 		{
 			if (String.Compare(PreviosEnd, "zzzzzz", StringComparison.Ordinal) > 0)
@@ -125,10 +128,7 @@ namespace Manager
 
 				for (int i = 0; i < pairs.Length - 1; i += 2)
 				{
-					--_hashCount;
-					
-					// for debug
-					//Console.WriteLine("\t pair of md5 and password :" + pairs[i] + " "+ pairs[i + 1] + "\n");
+					--_hashCount;					
 
 					if (!_resultHashAnswer.ContainsKey(pairs[i]))
 						_resultHashAnswer.Add(pairs[i], pairs[i + 1]);
@@ -154,7 +154,7 @@ namespace Manager
 			{
 				var resultStr = "";
 				foreach (var pair in _resultHashAnswer)
-					resultStr += "\t pair of md5 and password :" + pair.Key + "\t" + pair.Value + "\n";
+					resultStr += "pair of md5 and password :" + pair.Key + "\t" + pair.Value + "\n";
 				
 				return resultStr;
 			}
