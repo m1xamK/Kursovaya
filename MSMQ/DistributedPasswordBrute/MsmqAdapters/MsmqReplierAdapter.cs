@@ -22,17 +22,16 @@ namespace MsmqAdapters
 	    public MsmqReplierAdapter(String requestQueueName, String invalidQueueName, Agent.Agent agent)
         {
             _agent = agent;
-            
+            var machineName = Environment.MachineName;
             MessageQueue requestQueue = !MessageQueue.Exists(requestQueueName) ? MessageQueue.Create(requestQueueName) : new MessageQueue(requestQueueName);
-            
-            _invalidQueue = !MessageQueue.Exists(requestQueueName) ? MessageQueue.Create(invalidQueueName) : new MessageQueue(invalidQueueName);
+            _invalidQueue = !MessageQueue.Exists(invalidQueueName) ? MessageQueue.Create(invalidQueueName) : new MessageQueue(invalidQueueName);
 
             requestQueue.MessageReadPropertyFilter.SetAll();
             ((XmlMessageFormatter)requestQueue.Formatter).TargetTypeNames = new[] { "System.String" };
 
             // Создаем экземпляр делегата ReceiveCompletedEventHandler
             // Система сообщений будет автоматически вызывать метод OnReceiveCompleted при поступлении нового сообщения в очередь
-            requestQueue.ReceiveCompleted += new ReceiveCompletedEventHandler(OnReceiveCompleted);
+            requestQueue.ReceiveCompleted += OnReceiveCompleted;
 
             // Переходим в режим ожидания.
             requestQueue.BeginReceive();
