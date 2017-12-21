@@ -17,7 +17,7 @@ namespace Manager
     public delegate void CustomEventHandler(object sender, LogArgs logArgs);
 
 	/// <summary>
-	/// класс осуществляющий равномерное распределение вычисления md5 праобраза 
+	/// класс осуществляющий равномерное распределение вычисления md5 праобраза
 	/// </summary>
 	public class Manager
     {

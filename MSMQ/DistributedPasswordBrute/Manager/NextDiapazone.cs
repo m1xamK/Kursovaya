@@ -8,7 +8,7 @@ namespace Manager
 		public const string Alphabet = "0123456789abcdefghijklmnopqrstuvwxyz";
 
 		/// <summary>
-		/// Функция предназначена для нахождения смещения до которого считаем хеш
+		/// Функция предназначена для нахождения смещения до которого считаем хеш 
 		/// </summary>
 		/// <param name="word">Слово, для которого находим смещение</param>
 		/// <returns>Смещение до которого считаем хеш</returns>
