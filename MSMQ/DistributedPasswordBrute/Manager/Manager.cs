@@ -1,5 +1,6 @@
 ﻿using System;
 ﻿using System.Collections.Generic;
+using System.Linq;
 using MsmqAdapters;
 
 namespace Manager
@@ -14,7 +15,7 @@ namespace Manager
 
         public string Message { get; set; }
     }
-    public delegate void CustomEventHandler(object sender, LogArgs logArgs);
+
 	/// <summary>
 	/// структура данных, хранящая информацию о комбинациях, находящихся в обработке у агентов
 	/// </summary>
@@ -60,15 +61,14 @@ namespace Manager
 
 		private string[] _hashArr;
 
-        public event EventHandler<LogArgs> logEvent;
+        public event EventHandler<LogArgs> LogEvent;
         protected virtual void OnLogEvent(LogArgs e)
         {
-            var handler = logEvent;
+            var handler = LogEvent;
             if (handler != null)
             {
-                e.Message += String.Format("at {0}", DateTime.Now.ToString());
+                e.Message += String.Format("at {0}", DateTime.Now);
                 handler(this, e);
-
             }
         }
 
@@ -160,7 +160,7 @@ namespace Manager
 
 			        if (!_resultHashAnswer.ContainsKey(pairs[i]))
 			        {
-			            OnLogEvent(new LogArgs("Hash:" + pairs[i] + "\nPassword:" + pairs[i+1] + "\n"));
+			            OnLogEvent(new LogArgs("Hash: " + pairs[i] + "\tPassword: " + pairs[i+1] + "\n"));
 			            _resultHashAnswer.Add(pairs[i], pairs[i + 1]);
 			        }
 			    }
@@ -182,14 +182,8 @@ namespace Manager
 			}
 
 			if (_msgList.Count == 0 || _hashCount == 0)
-			{
-				var resultStr = "";
-				foreach (var pair in _resultHashAnswer)
-					resultStr += "pair of md5 and password :" + pair.Key + "\t" + pair.Value + "\n";
-				
-				return resultStr;
-			}
-
+				return _resultHashAnswer.Aggregate("", (current, pair) => current + "pair of md5 and password :" + pair.Key + "\t" + pair.Value + "\n");
+			
 			return "";
 		}
 

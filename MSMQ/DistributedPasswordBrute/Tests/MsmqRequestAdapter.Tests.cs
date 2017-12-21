@@ -7,9 +7,9 @@ namespace Agent.Tests
 	[TestFixture]
 	class MsmqRequestorAdapterTest
 	{
-		private readonly string RequestQueue = ".\\Private$\\RequestQueue";
-		private readonly string ReplyQueue = ".\\Private$\\ReplyQueue";
-		private readonly string InvalidQueue = ".\\Private$\\InvalidQueue";
+		private readonly string RequestQueue = "DESKTOP-OUP4I3U\\Private$\\RequestQueue";
+		private readonly string ReplyQueue = "DESKTOP-OUP4I3U\\Private$\\ReplyQueue";
+		private readonly string InvalidQueue = "DESKTOP-OUP4I3U\\Private$\\InvalidQueue";
 
 		private Message SendTestMessage(string start, string finish, string[] hashArr)
 		{

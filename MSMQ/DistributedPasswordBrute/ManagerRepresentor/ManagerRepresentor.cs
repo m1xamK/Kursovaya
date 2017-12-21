@@ -22,7 +22,7 @@ namespace ManagerRepresentor
             _hashList = new List<string>(); //Инициализация перемееных.
             CalcultationFlag = false;
             _manager = new Manager.Manager(requestResource, replyResourсe);
-            _manager.logEvent += HandleCustomEvent;
+            _manager.LogEvent += HandleCustomEvent;
         }
         /// <summary>
         /// Добавляет новый хеш в List.
