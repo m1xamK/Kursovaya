@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using Manager;
 
 namespace ManagerRepresentor
 {
@@ -16,9 +18,11 @@ namespace ManagerRepresentor
 		/// <param name="replyResourсe">Имя очереди ответов</param>
         public ManagerRepresentor(string requestResource, string replyResourсe)
         {
+            
             _hashList = new List<string>(); //Инициализация перемееных.
             CalcultationFlag = false;
             _manager = new Manager.Manager(requestResource, replyResourсe);
+            _manager.logEvent += HandleCustomEvent;
         }
         /// <summary>
         /// Добавляет новый хеш в List.
@@ -50,6 +54,12 @@ namespace ManagerRepresentor
 
             _hashList.Clear();	//После окончания вычислений отчистка _hashList.
 			return strFlag;
+        }
+
+
+        void HandleCustomEvent(object sender, LogArgs e)
+        {
+            Console.WriteLine("Result:\n{0}\n", e.Message);
         }
     }
 }

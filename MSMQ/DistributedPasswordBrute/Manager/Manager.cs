@@ -4,11 +4,23 @@ using MsmqAdapters;
 
 namespace Manager
 {
+
+    public class LogArgs : EventArgs
+    {
+        public LogArgs(string logMsg)
+        {
+            Message = logMsg;
+        }
+
+        public string Message { get; set; }
+    }
+    public delegate void CustomEventHandler(object sender, LogArgs logArgs);
 	/// <summary>
 	/// структура данных, хранящая информацию о комбинациях, находящихся в обработке у агентов
 	/// </summary>
 	public class MsgInProcess
 	{
+	    
 		public KeyValuePair<string, string> Range { get; private set; }
 		public DateTime Time { get; private set; }
 		public string[] Hashs { get; private set; }
@@ -19,6 +31,8 @@ namespace Manager
 			Range = range;
 			Time = time;
 		}
+
+	   
 	}
 
 	/// <summary>
@@ -45,6 +59,18 @@ namespace Manager
 		private int _hashCount;
 
 		private string[] _hashArr;
+
+        public event EventHandler<LogArgs> logEvent;
+        protected virtual void OnLogEvent(LogArgs e)
+        {
+            var handler = logEvent;
+            if (handler != null)
+            {
+                e.Message += String.Format("at {0}", DateTime.Now.ToString());
+                handler(this, e);
+
+            }
+        }
 
 		//конец последнего диапазона, отправленого для просчета агенту
 		public string PreviosEnd { get; private set; }
@@ -125,14 +151,19 @@ namespace Manager
 				var messageBody = message.Body.ToString();
 
 				var pairs = messageBody.Split(' ');
+                // тут эвент 
+                
+                //
+			    for (int i = 0; i < pairs.Length - 1; i += 2)
+			    {
+			        --_hashCount;
 
-				for (int i = 0; i < pairs.Length - 1; i += 2)
-				{
-					--_hashCount;					
-
-					if (!_resultHashAnswer.ContainsKey(pairs[i]))
-						_resultHashAnswer.Add(pairs[i], pairs[i + 1]);
-				}
+			        if (!_resultHashAnswer.ContainsKey(pairs[i]))
+			        {
+			            OnLogEvent(new LogArgs("Hash:" + pairs[i] + "\nPassword:" + pairs[i+1] + "\n"));
+			            _resultHashAnswer.Add(pairs[i], pairs[i + 1]);
+			        }
+			    }
 			}
 
 			NextMsgSend(message.CorrelationId);
