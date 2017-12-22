@@ -14,7 +14,7 @@ namespace Agent.Tests
 
 		private Message SendTestMessage(string start, string finish, string[] hashArr)
 		{
-			var requestAdapter = new MsmqRequestorAdapter(RequestQueue, ReplyQueue);
+			var requestAdapter = new MsmqRequestorAdapter();//RequestQueue, ReplyQueue);
 
 			requestAdapter.Send(start, finish, hashArr);
 			return requestAdapter.ReceiveSync();

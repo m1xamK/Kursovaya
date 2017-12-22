@@ -6,17 +6,28 @@ namespace MsmqAdapters
 {
     public class MsmqRequestorAdapter
     {
-        private readonly MessageQueue _requestQueue;
+        private MessageQueue[] _requestQueue;
         private readonly MessageQueue _replyQueue;
+	    private int _requestCount;
 
         /// <summary>
         /// Инициализирует объект класса MsmqRequestorAdapter
         /// </summary>
         /// <param name="requestQueueName">Имя очереди запросов</param>
         /// <param name="replyQueueName">Имя очереди ответов</param>
-        public MsmqRequestorAdapter(string requestQueueName, string replyQueueName)
+        public MsmqRequestorAdapter() //string requestQueueName, string replyQueueName)
         {
-			_requestQueue = new MessageQueue(requestQueueName);
+			var managerIp = "192.168.0.100";
+	        string[] agentsIp = {"192.168.0.101", "192.168.0.100"};
+			string[] requestQueueName = { "FormatName:Direct=TCP:" + agentsIp[0] + "\\Private$\\RequestQueue", "FormatName:Direct=TCP:" + agentsIp[1] + "\\Private$\\RequestQueue" };
+			string replyQueueName = "FormatName:Direct=TCP:" + managerIp + "\\Private$\\ReplyQueue";
+
+	        _requestQueue = new[]
+	        {
+		        new MessageQueue(requestQueueName[0]),
+		        new MessageQueue(requestQueueName[1])
+	        };
+	        
 			_replyQueue = new MessageQueue(replyQueueName);
 
             // Фильтр для считывания сообщения со всеми свойствами
@@ -34,7 +45,7 @@ namespace MsmqAdapters
 		/// <param name="finish">Строка до которой агент подбирает хеши</param>
 		/// <param name="hashSumArr">Хеши, которые пытается найти</param>
 	    /// <returns>Идентификатор отправленного сообщения</returns>
-	    public string Send(string start, string finish, string[] hashSumArr)
+	    public string Send(string start, string finish, string[] hashSumArr, MessageQueue queue = null)
         {
             Message requestMessage = new Message();
 
@@ -53,9 +64,13 @@ namespace MsmqAdapters
 			requestMessage.TimeToBeReceived = TimeSpan.FromMinutes(1);
 
             // Отправляем сообщение
-			_requestQueue.Send(requestMessage);
+			if (queue == null)
+				_requestQueue[++_requestCount%_requestQueue.Length].Send(requestMessage);
+			else
+				queue.Send(requestMessage);
 
-            // для дебага
+
+			// для дебага
 			Console.WriteLine("Sent request message");
 			Console.WriteLine(start + "\n");
             

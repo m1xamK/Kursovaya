@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 using MsmqAdapters;
 
 namespace AgentRepresentor
@@ -7,8 +8,10 @@ namespace AgentRepresentor
     {
         public static void Main()
         {
-	        new MsmqReplierAdapter("FormatName:Direct=TCP:169.254.241.60\\private$\\RequestQueue",
-                "FormatName:Direct=TCP:169.254.241.60\\private$\\InvalidQueue", new Agent.Agent());
+			var managerIp = "192.168.0.100";
+			var agentIp = Dns.GetHostByName(Dns.GetHostName()).AddressList[0].ToString();
+			new MsmqReplierAdapter("FormatName:Direct=TCP:" + managerIp + "\\private$\\RequestQueue",	// da da delaem share request y managera
+				"FormatName:Direct=TCP:" + agentIp +"\\private$\\InvalidQueue", new Agent.Agent());
 
 	        Console.ReadLine();
         }

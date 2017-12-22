@@ -22,8 +22,7 @@ namespace MsmqAdapters
 	    public MsmqReplierAdapter(String requestQueueName, String invalidQueueName, Agent.Agent agent)
         {
             _agent = agent;
-            var machineName = Environment.MachineName;
-			MessageQueue requestQueue = new MessageQueue(requestQueueName);
+		    MessageQueue requestQueue = new MessageQueue(requestQueueName, true);
 
             _invalidQueue = new MessageQueue(invalidQueueName);
 

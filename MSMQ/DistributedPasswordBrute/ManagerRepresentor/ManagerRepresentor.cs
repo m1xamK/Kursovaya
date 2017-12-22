@@ -16,12 +16,12 @@ namespace ManagerRepresentor
         /// </summary>
 		/// <param name="requestResource">Имя очереди запросов</param>
 		/// <param name="replyResourсe">Имя очереди ответов</param>
-        public ManagerRepresentor(string requestResource, string replyResourсe)
+        public ManagerRepresentor() //string requestResource, string replyResourсe)
         {
             
             _hashList = new List<string>(); //Инициализация перемееных.
             CalcultationFlag = false;
-            _manager = new Manager.Manager(requestResource, replyResourсe);
+	        _manager = new Manager.Manager(); //requestResource, replyResourсe);
             _manager.LogEvent += HandleCustomEvent;
         }
         /// <summary>

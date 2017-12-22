@@ -1,6 +1,9 @@
 ﻿using System;
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Messaging;
+using System.Runtime.Serialization;
+using System.Timers;
 using MsmqAdapters;
 
 namespace Manager
@@ -14,6 +17,15 @@ namespace Manager
 
         public string Message { get; set; }
     }
+	public class LostMessageArgs : EventArgs
+	{
+		public LostMessageArgs(string msgid)
+		{
+			Message = msgid;
+		}
+
+		public string Message { get; set; }
+	}
 
 
 	/// <summary>
@@ -41,6 +53,7 @@ namespace Manager
 
 		// Событие для вывода логов
         public event EventHandler<LogArgs> LogEvent;
+		public event EventHandler<LostMessageArgs> LostMessageEvent;
 
         protected virtual void OnLogEvent(LogArgs e)
         {
@@ -53,6 +66,18 @@ namespace Manager
             }
         }
 
+		private static  void OnLostMessageEvent(object obj,LostMessageArgs msgId)
+		{
+			var handler = LostMessageEvent;
+
+			if (handler != null)
+			{
+
+				handler(this, msgId);
+			}
+		}
+
+
 		//конец последнего диапазона, отправленого для просчета агенту
 		public string PreviousEnd { get; private set; }
 
@@ -61,11 +86,11 @@ namespace Manager
 		/// </summary>
         /// <param name="requestResource">имя очереди запросов</param>
         /// <param name="replyResourсe">имя очереди ответов</param>
-        public Manager(string requestResource, string replyResourсe)
+        public Manager()//string requestResource, string replyResourсe)
 		{
 			PreviousEnd = "0";
 			_msgList = new Dictionary<string, MsgInProcess>();
-			_sender = new MsmqRequestorAdapter(requestResource, replyResourсe);
+			_sender = new MsmqRequestorAdapter(); //requestResource, replyResourсe);
 			_resultHashAnswer = new Dictionary<string, string>();
 		}
 
@@ -75,14 +100,22 @@ namespace Manager
 		/// <param name="start">От этой строки начинаем считать хеши</param>
 		/// <param name="end">До этой строки считаем хеш</param>
 		/// <param name="hash">md5 свертки</param>
-		void Send(string start, string end, string[] hash)
+		void Send(string start, string end, string[] hash, MessageQueue queue = null)
 		{
 			//отправляем сообщение агенту через какое либо средство обмена сообщениями
-			var msdId = _sender.Send(start, end, hash);
+			var msgId = _sender.Send(start, end, hash, queue);
 
 			//отправляем сообщние в обрабатываемые
-			_msgList.Add(msdId, new MsgInProcess(new KeyValuePair<string, string>(start, end), DateTime.Now));
+			_msgList.Add(msgId, new MsgInProcess(new KeyValuePair<string, string>(start, end), DateTime.Now));
+
+			var aTimer = new System.Timers.Timer(2000);
+			aTimer.Elapsed += OnLostMessageEvent;
+			LostMessageArgs eventArgs = new LostMessageArgs(msgId);
+			OnLostMessageEvent(eventArgs);
+			aTimer.AutoReset = true;
+			aTimer.Enabled = true;
 		}
+
 
 		/// <summary>
 		/// Первоначальное заполнение очереди нашими сообщениями
@@ -110,14 +143,14 @@ namespace Manager
         /// Отправляем сообщение на основе предыдущего
 		/// </summary>
 		/// <param name="msgId">Идентификатор сообщения</param>
-		public void NextMsgSend(string msgId)
+		public void NextMsgSend(MessageQueue queue)
 		{
 			if (String.Compare(PreviousEnd, LastRange, StringComparison.Ordinal) > 0)
 				return;
 
 			string finish = NextDiapason.Get(PreviousEnd);
 
-			Send(PreviousEnd, finish, _hashArr);
+			Send(PreviousEnd, finish, _hashArr, queue);
 
 			PreviousEnd = finish; //сохраняем конец, отправленого диапазона 
 		}
@@ -148,7 +181,7 @@ namespace Manager
 			    }
 			}
 
-			NextMsgSend(message.CorrelationId);
+			NextMsgSend(message.ResponseQueue);
 
 			_msgList.Remove(message.CorrelationId);
 
