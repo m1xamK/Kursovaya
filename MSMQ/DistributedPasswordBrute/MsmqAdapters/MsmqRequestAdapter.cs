@@ -65,7 +65,7 @@ namespace MsmqAdapters
 
             // Отправляем сообщение
 			if (queue == null)
-				_requestQueue[++_requestCount%_requestQueue.Length].Send(requestMessage);
+				_requestQueue[++_requestCount % _requestQueue.Length].Send(requestMessage);
 			else
 				queue.Send(requestMessage);
 
