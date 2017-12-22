@@ -36,9 +36,6 @@ namespace Manager
 		// Массив хешей, для которых ищем свертки
 		private static string[] _hashArr;
 
-		// Массив сообщений, утеряных всвязи истекшим сроком действия
-		private static List<string> _lostMsgIdList;
- 
         // Количество оставшихся хешей
 	    private int _count = 0;
 
@@ -51,15 +48,12 @@ namespace Manager
 		/// <summary>
 		/// указываем пути до ресурсов обмена
 		/// </summary>
-        /// <param name="requestResource">имя очереди запросов</param>
-        /// <param name="replyResourсe">имя очереди ответов</param>
-        public Manager()//string requestResource, string replyResourсe)
+		public Manager()//string requestResource, string replyResourсe)
 		{
 			PreviousEnd = "0";
 			_msgList = new Dictionary<string, MsgInProcess>();
 			_sender = new MsmqRequestorAdapter(); //requestResource, replyResourсe);
 			_resultHashAnswer = new Dictionary<string, string>();
-			_lostMsgIdList = new List<string>();
 		}
 
 		/// <summary>
@@ -75,10 +69,6 @@ namespace Manager
 
 			//отправляем сообщние в обрабатываемые
 			_msgList.Add(msgId, new MsgInProcess(new KeyValuePair<string, string>(start, end), DateTime.Now));
-
-			//Таймер
-			TimerCallback tm = LostMessageTimer;
-			var timer = new Timer(tm, "Message", 0, 2000);
 		}
 
 		/// <summary>
@@ -121,19 +111,17 @@ namespace Manager
 		public string ReciveSync() 
 		{
 			//смотрим какие сообщения истекли по времении, удаяем из массива сообщений, находящихся в обработке, и отправляем заново
-			foreach (var id in _lostMsgIdList)
+			foreach (var msg in _msgList)
 			{
-				//существует ли это сообщение(в случае когда агент долго обрабатывал и сообщение истекло по времени)
-				if (!_msgList.ContainsKey(id))
-					continue;
+				if(DateTime.Now.Ticks - msg.Value.Time.Ticks < 20000)
+					break;
 
-				//находим потеряное сообщение в массиве сообщений
-				var lostmsg = _msgList[id];
-
+				Console.WriteLine("lost msg : " + msg.Key);
+				
 				//отправляем заново
-				Send(lostmsg.Range.Key, lostmsg.Range.Value, _hashArr);
+				Send(msg.Value.Range.Key, msg.Value.Range.Value, _hashArr);
 
-				_msgList.Remove(id);
+				_msgList.Remove(msg.Key);
 			}
 
 			var message = _sender.ReceiveSync();
@@ -186,19 +174,5 @@ namespace Manager
 				handler(this, e);
 			}
 		}
-
-		public static void LostMessageTimer(object obj)
-		{
-			//запили проверку на наличие сообщения
-			var msg = (string)obj;
-
-			if (!_msgList.ContainsKey(msg))
-				return;
-
-			Console.WriteLine(msg);
-
-			_lostMsgIdList.Add(msg);
-		}
-
     }
 }
