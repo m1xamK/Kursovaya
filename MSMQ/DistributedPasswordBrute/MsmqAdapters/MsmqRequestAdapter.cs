@@ -82,13 +82,18 @@ namespace MsmqAdapters
 		/// </summary>
 		/// <returns>Полученное сообщение.</returns>
         public Message ReceiveSync()
-        {
-            Message replyMessage = _replyQueue.Receive();
+		{
+			try
+			{
+				var waitTimeOut = TimeSpan.FromMilliseconds(10);
+				Message replyMessage = _replyQueue.Receive(waitTimeOut);
 
-            if (replyMessage == null) 
-                return null;
-
-            return replyMessage;
+				return replyMessage;
+			}
+			catch (Exception)
+			{
+				return null;
+			}
         }
 
 		// Освобождает ресурсы, выделенные для _replyQueue

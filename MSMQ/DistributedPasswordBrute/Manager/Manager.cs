@@ -78,7 +78,7 @@ namespace Manager
 
 			//Таймер
 			TimerCallback tm = LostMessageTimer;
-			new Timer(tm, "Message", 0, 2000);
+			var timer = new Timer(tm, "Message", 0, 2000);
 		}
 
 		/// <summary>
