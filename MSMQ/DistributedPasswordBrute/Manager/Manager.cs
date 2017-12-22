@@ -36,6 +36,9 @@ namespace Manager
 		// Массив хешей, для которых ищем свертки
 		private string[] _hashArr;
 
+        // Количество оставшихся хешей
+	    private int _count = 0;
+
 		// Событие для вывода логов
         public event EventHandler<LogArgs> LogEvent;
 
@@ -88,6 +91,7 @@ namespace Manager
 		public void InitialFillingOfTheQueue(string[] hashs)
 		{
 			_hashArr = hashs;
+		    _count = hashs.Length;
 
 			// Сколько добавляем сообщений в очередь
 			const int msgInQueue = 10;
@@ -134,19 +138,13 @@ namespace Manager
                 
 			    for (int i = 0; i < pairs.Length - 1; i += 2)
 			    {
-					//if (_hashArr.Contains(pairs[i]))
-					//{
-					//	_hashArr.Remove(pairs[i]);
+			        if (_resultHashAnswer.ContainsKey(pairs[i])) 
+                        continue;
+			        
+			        OnLogEvent(new LogArgs("Hash: " + pairs[i] + "\tPassword: " + pairs[i+1] + "\n"));
+			        _resultHashAnswer.Add(pairs[i], pairs[i + 1]);
 
-					//	// все остальное
-
-					//}
-
-			        if (!_resultHashAnswer.ContainsKey(pairs[i]))
-			        {
-			            OnLogEvent(new LogArgs("Hash: " + pairs[i] + "\tPassword: " + pairs[i+1] + "\n"));
-			            _resultHashAnswer.Add(pairs[i], pairs[i + 1]);
-			        }
+			        --_count;
 			    }
 			}
 
@@ -157,7 +155,9 @@ namespace Manager
 			//проверяем "свежесть" сообщений, отправляем еще раз, если кто-то испортился
 			foreach (var msgInProcess in _msgList)
 			{
-				if (msgInProcess.Value.Time.Ticks - DateTime.Now.Ticks > 10000)
+			    int sleepTime = 60000;
+
+				if (msgInProcess.Value.Time.Ticks - DateTime.Now.Ticks > sleepTime)
 				{
 					Send(msgInProcess.Value.Range.Key, msgInProcess.Value.Range.Value, _hashArr);
  
@@ -165,7 +165,7 @@ namespace Manager
 				}
 			}
 
-			if (_msgList.Count == 0 || _hashArr.Length == 0)
+			if (_msgList.Count == 0 || _count == 0)
 			{
 				// Освобождаем ресурсы очереди.
 				_sender.StopSession();

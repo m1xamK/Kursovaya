@@ -31,7 +31,7 @@ namespace Agent
 
 	        // Основной цикл, здесь происходит подбор паролей.
             while (tempStr.ToString() != finish && passwdList.Count != passCount)
-            {
+            {   
 				string tempMd5 = Md5Hash(tempStr.ToString());
 
 				if (hashSumList.Contains(tempMd5))

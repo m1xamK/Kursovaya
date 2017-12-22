@@ -53,7 +53,7 @@ namespace MsmqAdapters
 			requestMessage.TimeToBeReceived = TimeSpan.FromMinutes(1);
 
             // Отправляем сообщение
-			_requestQueue.Send(requestMessage, MessageQueueTransactionType.Automatic);
+			_requestQueue.Send(requestMessage);
 
             // для дебага
 			Console.WriteLine("Sent request message");
