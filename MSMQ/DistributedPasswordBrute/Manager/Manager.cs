@@ -1,5 +1,6 @@
 ﻿using System;
 ﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Messaging;
 using MsmqAdapters;
@@ -34,7 +35,7 @@ namespace Manager
 		private readonly Dictionary<string, string> _resultHashAnswer;
 
 		// Последняя комбинация которая должна быть посчитана
-		private const string LastRange = "zzzzzz";
+		private string LastRange;
 
 		// Массив хешей, для которых ищем свертки
 		private static string[] _hashArr;
@@ -81,8 +82,15 @@ namespace Manager
 		/// <param name="hashs">Хеш свертки, для которых ищем пароли.</param>
 		public void InitialFillingOfTheQueue(string[] hashs)
 		{
-			_hashArr = hashs;
-		    _count = hashs.Length;
+			string configPath = "config_constant.txt";
+	        
+			string[] lines = File.ReadAllLines(configPath);
+
+			LastRange = lines[0];
+
+			_hashArr = lines[1].Split(' ');
+
+			_count = _hashArr.Length;
 
 			// Сколько добавляем сообщений в очередь при инициализации
 			const int msgInQueue = 10;
