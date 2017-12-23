@@ -25,7 +25,7 @@ namespace MsmqAdapters
             _agent = agent;
 
 		    var requestQueueName = "FormatName:Direct=TCP:" + managerIp + "\\private$\\RequestQueue";
-		    MessageQueue requestQueue = new MessageQueue(requestQueueName, true);
+		    var requestQueue = new MessageQueue(requestQueueName, true);
 
 		    var invalidQueueName = "FormatName:Direct=TCP:" + agentIp + "\\private$\\InvalidQueue";
             _invalidQueue = new MessageQueue(invalidQueueName);
@@ -55,9 +55,10 @@ namespace MsmqAdapters
 
             try
             {
+				// что бы убедиться что работает.
 				Console.WriteLine("Message ID:\t{0}", requestMessage.Id);				
 
-                string messageBody = requestMessage.Body.ToString();
+                var messageBody = requestMessage.Body.ToString();
 
 				// Разбор сообщения
 				var messageInfo = messageBody.Split(' ');

@@ -2,14 +2,13 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Messaging;
-using System.Text.RegularExpressions;
 using Message = System.Messaging.Message;
 
 namespace MsmqAdapters
 {
     public class MsmqRequestorAdapter
     {
-        private MessageQueue[] _requestQueue;
+		private readonly List<MessageQueue> _requestQueue;
         private readonly MessageQueue _replyQueue;
 	    private int _requestCount;
 
@@ -18,26 +17,32 @@ namespace MsmqAdapters
         /// </summary>
         public MsmqRequestorAdapter() //string requestQueueName, string replyQueueName)
         {
-			string configPath = "ip_config_ma.txt";
-
-			string[] lines = File.ReadAllLines(configPath);
-
-			var managerIp = lines[0];
-
+	        _requestQueue = new List<MessageQueue>();
+	        string configPath = "ip_config_manager.txt";
+	        string managerIp;
 			List<string> agentsIp = new List<string>();
 
-			for (int i = 0; i < lines.Length - 1; ++i)
-				agentsIp.Add(lines[i]);
-
-	     	string[] requestQueueName = { "FormatName:Direct=TCP:" + agentsIp[0] + "\\Private$\\RequestQueue", "FormatName:Direct=TCP:" + agentsIp[1] + "\\Private$\\RequestQueue" };
-			string replyQueueName = "FormatName:Direct=TCP:" + managerIp + "\\Private$\\ReplyQueue";
-
-	        _requestQueue = new[]
+	        try
 	        {
-		        new MessageQueue(requestQueueName[0]),
-		        new MessageQueue(requestQueueName[1])
-	        };
-	        
+				string[] lines = File.ReadAllLines(configPath);
+				managerIp = lines[0];
+				
+				for (int i = 1; i < lines.Length; ++i)
+					agentsIp.Add(lines[i]);
+	        }
+	        catch (Exception)
+	        {
+				Console.WriteLine("no file ip_config_manager.txt exist");
+				return;
+	        }
+			
+	        foreach (var ip in agentsIp)
+	        {
+		        var requestQueueName = "FormatName:Direct=TCP:" + ip + "\\Private$\\RequestQueue";
+				_requestQueue.Add(new MessageQueue(requestQueueName));
+	        }
+
+			var replyQueueName = "FormatName:Direct=TCP:" + managerIp + "\\Private$\\ReplyQueue";
 			_replyQueue = new MessageQueue(replyQueueName);
 
 	        try
@@ -45,9 +50,11 @@ namespace MsmqAdapters
 				_replyQueue.Purge();
 	        }
 	        catch (Exception)
-	        {}
-		
-            // Фильтр для считывания сообщения со всеми свойствами
+	        {
+		        // ignored
+	        }
+
+	        // Фильтр для считывания сообщения со всеми свойствами
             _replyQueue.MessageReadPropertyFilter.SetAll();
 
             // Задаем формат содержимого сообщения как строку.
@@ -55,12 +62,13 @@ namespace MsmqAdapters
             ((XmlMessageFormatter)_replyQueue.Formatter).TargetTypeNames = new string[] { "System.String" };
         }
 
-		/// <summary>
-		/// Отправляет сообщение в очередь запросов.
-		/// </summary>
-		/// <param name="start">Строка от которой агент начнет подбирать хеши</param>
-		/// <param name="finish">Строка до которой агент подбирает хеши</param>
-		/// <param name="hashSumArr">Хеши, которые пытается найти</param>
+	    /// <summary>
+	    /// Отправляет сообщение в очередь запросов.
+	    /// </summary>
+	    /// <param name="start">Строка от которой агент начнет подбирать хеши</param>
+	    /// <param name="finish">Строка до которой агент подбирает хеши</param>
+	    /// <param name="hashSumArr">Хеши, которые пытается найти</param>
+	    /// <param name="queue">Очередь в которую отправляем сообщение.</param>
 	    /// <returns>Идентификатор отправленного сообщения</returns>
 	    public string Send(string start, string finish, string[] hashSumArr, MessageQueue queue = null)
         {
@@ -82,11 +90,11 @@ namespace MsmqAdapters
 
             // Отправляем сообщение
 			if (queue == null)
-				_requestQueue[++_requestCount % _requestQueue.Length].Send(requestMessage);
+				_requestQueue[++_requestCount % _requestQueue.Count].Send(requestMessage);
 			else
 				queue.Send(requestMessage);
 
-			// для дебага
+			// для дебага чтобы вы убиделись, что работает
 			Console.WriteLine("Sent request message");
 			Console.WriteLine(start + "\n");
             
@@ -101,10 +109,7 @@ namespace MsmqAdapters
         {
             Message replyMessage = _replyQueue.Receive();
 
-            if (replyMessage == null) 
-                return null;
-
-            return replyMessage;
+			return replyMessage;
         }
 
 		// Освобождает ресурсы, выделенные для _replyQueue
