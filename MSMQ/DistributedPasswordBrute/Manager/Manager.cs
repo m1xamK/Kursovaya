@@ -82,20 +82,14 @@ namespace Manager
 		/// <param name="hashs">Хеш свертки, для которых ищем пароли.</param>
 		public void InitialFillingOfTheQueue(string[] hashs)
 		{
-			string configPath = "config_constant.txt";
-	        
-			string[] lines = File.ReadAllLines(configPath);
-
-			LastRange = lines[0];
-
-			_hashArr = lines[1].Split(' ');
+			_hashArr = hashs;
 
 			_count = _hashArr.Length;
 
 			// Сколько добавляем сообщений в очередь при инициализации
 			const int msgInQueue = 10;
 
-			for (int i = 0; i < msgInQueue; ++i)
+			for (var i = 0; i < msgInQueue; ++i)
 			{
 				string finish = NextDiapason.Get(PreviousEnd);
 
@@ -143,6 +137,11 @@ namespace Manager
 				Send(msg.Value.Range.Key, msg.Value.Range.Value, _hashArr);
 			}
 		}
+
+		/// <summary>
+		/// синхронное ожидание ответа от агентов и обработка полученного сообщения
+		/// </summary>
+		/// <returns>найденные комбинации md5 - пароль</returns>
 		public string ReciveSync() 
 		{
 			// Отправляем заного сообщения на которые долго не приходит ответ.
@@ -171,6 +170,8 @@ namespace Manager
 			        --_count;
 			    }
 			}
+
+			Console.WriteLine("PRISHLO");
 
 			// Отправляем следующее сообщение.
 			NextMsgSend(message.ResponseQueue);
