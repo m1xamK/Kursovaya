@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Net;
 using MsmqAdapters;
 
@@ -8,7 +9,9 @@ namespace AgentRepresentor
     {
         public static void Main()
         {
-			const string managerIp = "192.168.0.101";	// IPv4 менеджера сообщений
+			string configPath = "ip_config_agent.txt";
+
+			string managerIp = File.ReadAllLines(configPath)[0]; // IPv4 менеджера сообщений
 
 #pragma warning disable 618
 			var agentIp = Dns.GetHostByName(Dns.GetHostName()).AddressList[0].ToString();	// наш IPv4 (агента)
