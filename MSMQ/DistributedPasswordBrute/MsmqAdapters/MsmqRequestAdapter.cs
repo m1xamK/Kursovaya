@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Messaging;
 using System.Text.RegularExpressions;
@@ -15,23 +16,20 @@ namespace MsmqAdapters
         /// <summary>
         /// Инициализирует объект класса MsmqRequestorAdapter
         /// </summary>
-        /// <param name="requestQueueName">Имя очереди запросов</param>
-        /// <param name="replyQueueName">Имя очереди ответов</param>
         public MsmqRequestorAdapter() //string requestQueueName, string replyQueueName)
         {
-<<<<<<< HEAD
-			var managerIp = "192.168.0.101";
-=======
-	        string configPath = "ip config";
+			string configPath = "ip_config_ma.txt";
 
-	        string[] lines = File.ReadAllLines(configPath);
+			string[] lines = File.ReadAllLines(configPath);
 
 			var managerIp = lines[0];
 
+			List<string> agentsIp = new List<string>();
 
->>>>>>> 08edb471e90d2af0995a2a982431113b871b94db
-	        string[] agentsIp = {"192.168.0.101", "192.168.0.100"};
-			string[] requestQueueName = { "FormatName:Direct=TCP:" + agentsIp[0] + "\\Private$\\RequestQueue", "FormatName:Direct=TCP:" + agentsIp[1] + "\\Private$\\RequestQueue" };
+			for (int i = 0; i < lines.Length - 1; ++i)
+				agentsIp.Add(lines[i]);
+
+	     	string[] requestQueueName = { "FormatName:Direct=TCP:" + agentsIp[0] + "\\Private$\\RequestQueue", "FormatName:Direct=TCP:" + agentsIp[1] + "\\Private$\\RequestQueue" };
 			string replyQueueName = "FormatName:Direct=TCP:" + managerIp + "\\Private$\\ReplyQueue";
 
 	        _requestQueue = new[]
