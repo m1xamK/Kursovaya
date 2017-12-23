@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using NUnit.Framework;
 
 namespace Agent.Tests
@@ -93,5 +94,15 @@ namespace Agent.Tests
 
 	        Assert.That(answerArr, !Is.SubsetOf(resArr));                    // Правильный ответ не является подмножеством полученного результата.
 	    }
+
+		[Test]
+		public void ParseIpConfigTest()
+		{
+			string text = "<mager_ip>12.44.67<\\mager_ip>";
+
+			var match = Regex.Matches(text, @"<mager_ip>([0-9.]*)<\\mager_ip>");
+
+			Assert.That("12.44.67", Is.EqualTo(match));
+		}
     }
 }

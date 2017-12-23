@@ -1,5 +1,7 @@
 ﻿using System;
+using System.IO;
 using System.Messaging;
+using System.Text.RegularExpressions;
 using Message = System.Messaging.Message;
 
 namespace MsmqAdapters
@@ -17,7 +19,13 @@ namespace MsmqAdapters
         /// <param name="replyQueueName">Имя очереди ответов</param>
         public MsmqRequestorAdapter() //string requestQueueName, string replyQueueName)
         {
-			var managerIp = "192.168.0.100";
+	        string configPath = "ip config";
+
+	        string[] lines = File.ReadAllLines(configPath);
+
+			var managerIp = lines[0];
+
+
 	        string[] agentsIp = {"192.168.0.101", "192.168.0.100"};
 			string[] requestQueueName = { "FormatName:Direct=TCP:" + agentsIp[0] + "\\Private$\\RequestQueue", "FormatName:Direct=TCP:" + agentsIp[1] + "\\Private$\\RequestQueue" };
 			string replyQueueName = "FormatName:Direct=TCP:" + managerIp + "\\Private$\\ReplyQueue";
