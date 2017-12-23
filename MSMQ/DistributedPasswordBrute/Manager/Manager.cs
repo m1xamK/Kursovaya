@@ -2,25 +2,28 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Messaging;
-using System.Threading;
 using MsmqAdapters;
 
 namespace Manager
 {
-	public class LogArgs : EventArgs
-	{
-		public LogArgs(string logMsg)
-		{
-			Message = logMsg;
-		}
+	/// <summary>
+	/// Событие для логирования
+	/// </summary>
+    public class LogArgs : EventArgs
+    {
+        public LogArgs(string logMsg)
+        {
+            Message = logMsg;
+        }
 
-		public string Message { get; set; }
-	}
+        public string Message { get; set; }
+    }
+
 	/// <summary>
 	/// класс осуществляющий равномерное распределение вычисления md5 праобраза
 	/// </summary>
 	public class Manager
-	{
+    {
 		/// Механизм осуществляющий передачу сообщений до агента
 		private readonly MsmqRequestorAdapter _sender;
 
@@ -28,7 +31,7 @@ namespace Manager
 		private static Dictionary<string, MsgInProcess> _msgList;	// словарь типа: {идентификатор сообщения, информация об сообщении}
 
 		// Храним пару - md5 комбинация и ответ на нее, для которых мы узнали
-		private Dictionary<string, string> _resultHashAnswer;
+		private readonly Dictionary<string, string> _resultHashAnswer;
 
 		// Последняя комбинация которая должна быть посчитана
 		private const string LastRange = "zzzzzz";
@@ -36,11 +39,11 @@ namespace Manager
 		// Массив хешей, для которых ищем свертки
 		private static string[] _hashArr;
 
-		// Количество оставшихся хешей
-		private int _count = 0;
+      // Количество оставшихся хешей
+	    private int _count;
 
 		// Событие для вывода логов
-		public event EventHandler<LogArgs> LogEvent;
+        public event EventHandler<LogArgs> LogEvent;
 
 		//конец последнего диапазона, отправленого для просчета агенту
 		public string PreviousEnd { get; private set; }
@@ -48,22 +51,21 @@ namespace Manager
 		/// <summary>
 		/// указываем пути до ресурсов обмена
 		/// </summary>
-		/// <param name="requestResource">имя очереди запросов</param>
-		/// <param name="replyResourсe">имя очереди ответов</param>
-		public Manager()//string requestResource, string replyResourсe)
+		public Manager()
 		{
 			PreviousEnd = "0";
 			_msgList = new Dictionary<string, MsgInProcess>();
-			_sender = new MsmqRequestorAdapter(); //requestResource, replyResourсe);
+			_sender = new MsmqRequestorAdapter();
 			_resultHashAnswer = new Dictionary<string, string>();
 		}
 
 		/// <summary>
-		/// отправка сообщения агенту 
+		/// Отправка сообщения агенту .
 		/// </summary>
 		/// <param name="start">От этой строки начинаем считать хеши</param>
 		/// <param name="end">До этой строки считаем хеш</param>
 		/// <param name="hash">md5 свертки</param>
+		/// <param name="queue">Очередь сообщений в которую отправляем сообщение</param>
 		void Send(string start, string end, string[] hash, MessageQueue queue = null)
 		{
 			//отправляем сообщение агенту через какое либо средство обмена сообщениями
@@ -74,15 +76,15 @@ namespace Manager
 		}
 
 		/// <summary>
-		/// Первоначальное заполнение очереди нашими сообщениями
+		/// Первоначальное заполнение очереди нашими сообщениями.
 		/// </summary>
 		/// <param name="hashs">Хеш свертки, для которых ищем пароли.</param>
 		public void InitialFillingOfTheQueue(string[] hashs)
 		{
 			_hashArr = hashs;
-			_count = hashs.Length;
+		    _count = hashs.Length;
 
-			// Сколько добавляем сообщений в очередь
+			// Сколько добавляем сообщений в очередь при инициализации
 			const int msgInQueue = 10;
 
 			for (int i = 0; i < msgInQueue; ++i)
@@ -96,8 +98,9 @@ namespace Manager
 		}
 
 		/// <summary>
-		/// Отправляем сообщение на основе предыдущего
+		/// Отправляем сообщение на основе последнего диапазона (PreviousEnd).
 		/// </summary>
+		/// <param name="queue">Очередь сообщений в которую отправляем сообщение.</param>
 		public void NextMsgSend(MessageQueue queue)
 		{
 			if (String.Compare(PreviousEnd, LastRange, StringComparison.Ordinal) > 0)
@@ -110,72 +113,76 @@ namespace Manager
 			PreviousEnd = finish; //сохраняем конец, отправленого диапазона 
 		}
 
-		public string ReciveSync()
+		/// <summary>
+		/// Осуществляет выборку сообщений на которые долго не приходит ответ и отсылает их заного.
+		/// </summary>
+		private void ResendLostMessages()
 		{
-			Dictionary<string, MsgInProcess> arr = new Dictionary<string, MsgInProcess>();
+			const int ticksInOneSecond = 10000000;
 
-			//смотрим какие сообщения истекли по времении, удаяем из массива сообщений, находящихся в обработке, и отправляем заново
-			foreach (var msg in _msgList)
-			{
-				long ticksInOneSecond = 10000000;
+			// Смотрим какие сообщения истекли по времении, удаяем из массива сообщений, находящихся в обработке, и отправляем заново.
+			Dictionary<string, MsgInProcess> lostMsgDict = _msgList.
+				Where(msg => DateTime.Now.Ticks - msg.Value.Time.Ticks >= 5*ticksInOneSecond).
+				ToDictionary(msg => msg.Key, msg => msg.Value);
 
-				if (DateTime.Now.Ticks - msg.Value.Time.Ticks < ticksInOneSecond * 20)
-					continue;
-
-				arr.Add(msg.Key, msg.Value);
-			}
-
-
-			foreach (var msg in arr)
+			foreach (var msg in lostMsgDict)
 			{
 				_msgList.Remove(msg.Key);
+
+				Console.WriteLine("lost msg:\t" + msg.Key);	// Нужно только что бы показать Вам, что ушедшие в небытие сообщения обрабатываются! В релизе удалим
 
 				//отправляем заново
 				Send(msg.Value.Range.Key, msg.Value.Range.Value, _hashArr);
 			}
-
-			arr.Clear();
+		}
+		public string ReciveSync() 
+		{
+			// Отправляем заного сообщения на которые долго не приходит ответ.
+			ResendLostMessages();
 
 			var message = _sender.ReceiveSync();
 
 			if (message == null)
 				return "";
-
-			//если у агента получилось посчитать ответ хоть на один хеш
+			
+			// Если у агента получилось посчитать ответ хоть на один хеш
 			if (message.Body.ToString() != "")
 			{
 				var messageBody = message.Body.ToString();
 
 				var pairs = messageBody.Split(' ');
+                
+			    for (int i = 0; i < pairs.Length - 1; i += 2)
+			    {
+			        if (_resultHashAnswer.ContainsKey(pairs[i])) 
+                        continue;
+			        
+			        OnLogEvent(new LogArgs("Hash: " + pairs[i] + "\tPassword: " + pairs[i+1] + "\n"));
+			        _resultHashAnswer.Add(pairs[i], pairs[i + 1]);
 
-				for (int i = 0; i < pairs.Length - 1; i += 2)
-				{
-					if (_resultHashAnswer.ContainsKey(pairs[i]))
-						continue;
-
-					OnLogEvent(new LogArgs("Hash: " + pairs[i] + "\tPassword: " + pairs[i + 1] + "\n"));
-					_resultHashAnswer.Add(pairs[i], pairs[i + 1]);
-
-					--_count;
-				}
+			        --_count;
+			    }
 			}
 
+			// Отправляем следующее сообщение.
 			NextMsgSend(message.ResponseQueue);
 
+			// Удаляем пришедшее сообщение из списка не обработанных
 			if (_msgList.ContainsKey(message.CorrelationId))
 				_msgList.Remove(message.CorrelationId);
 
-			if (_msgList.Count == 0 || _count == 0)
-			{
-				// Освобождаем ресурсы очереди.
-				_sender.StopSession();
+			if (_msgList.Count != 0 && _count != 0) return "";
 
-				return _resultHashAnswer.Aggregate("", (current, pair) => current + "pair of md5 and password :" + pair.Key + "\t" + pair.Value + "\n");
-			}
+			// Освобождаем ресурсы очереди.
+			_sender.StopSession();
 
-			return "";
+			return _resultHashAnswer.Aggregate("", (current, pair) => current + "pair of md5 and password :" + pair.Key + "\t" + pair.Value + "\n");
 		}
 
+		/// <summary>
+		/// Обработчик события LogEvent
+		/// </summary>
+		/// <param name="e"></param>
 		public virtual void OnLogEvent(LogArgs e)
 		{
 			var handler = LogEvent;
@@ -186,5 +193,5 @@ namespace Manager
 				handler(this, e);
 			}
 		}
-	}
+    }
 }

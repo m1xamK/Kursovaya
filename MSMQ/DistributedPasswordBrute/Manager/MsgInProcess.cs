@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace Manager
 {
 	/// <summary>
-	/// структура данных, хранящая информацию о сообщениях, отправленных агентам
+	/// Структура данных, хранящая информацию о сообщениях, отправленных агентам.
 	/// </summary>
 	public class MsgInProcess
 	{

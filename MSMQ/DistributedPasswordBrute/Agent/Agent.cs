@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
@@ -8,12 +7,7 @@ namespace Agent
 {
     public class Agent
     {
-        private readonly char[] _alphabet =
-        {
-            '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-            'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
-            'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'
-        };
+		public const string _alphabet = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";	//алфавит, из которого может состоять хеш
 		
 	    /// <summary>
 		/// Ищет пароли свертки которых находятся в hashSumList.
@@ -94,7 +88,7 @@ namespace Agent
             }
             else
             {
-                int ind = Array.IndexOf(_alphabet, lastSymb); // Индекс текущего последнего элемента комбинации.
+                int ind = _alphabet.IndexOf(lastSymb);	// Индекс текущего последнего элемента комбинации.
                 lastSymb = _alphabet[ind + 1];
 
 				// Заменяем на следующий символ.

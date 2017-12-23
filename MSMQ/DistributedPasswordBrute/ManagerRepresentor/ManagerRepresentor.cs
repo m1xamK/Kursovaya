@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Manager;
 
 namespace ManagerRepresentor
@@ -23,7 +22,7 @@ namespace ManagerRepresentor
             _hashList = new List<string>(); //Инициализация перемееных.
             CalcultationFlag = false;
 	        _manager = new Manager.Manager(); //requestResource, replyResourсe);
-            //_manager.LogEvent += HandleLogEvent;
+            _manager.LogEvent += HandleCustomEvent;
         }
         /// <summary>
         /// Добавляет новый хеш в List.
@@ -47,7 +46,7 @@ namespace ManagerRepresentor
             CalcultationFlag = true;	//Установка флага произведения вычислений.
             _manager.InitialFillingOfTheQueue(_hashList.ToArray<string>());	//Инициализация вычислений.
 
-	        var strFlag = "";
+	        string strFlag = "";
 			while (strFlag == "")
 			{
 				strFlag = _manager.ReciveSync();
@@ -57,6 +56,10 @@ namespace ManagerRepresentor
 			return strFlag;
         }
 
-		
+
+        void HandleCustomEvent(object sender, LogArgs e)
+        {
+            Console.WriteLine("Result:\n{0}\n", e.Message);
+        }
     }
 }

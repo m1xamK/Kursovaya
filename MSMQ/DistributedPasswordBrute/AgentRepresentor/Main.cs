@@ -8,10 +8,13 @@ namespace AgentRepresentor
     {
         public static void Main()
         {
-			var managerIp = "192.168.0.100";
-			var agentIp = Dns.GetHostByName(Dns.GetHostName()).AddressList[0].ToString();
-			new MsmqReplierAdapter("FormatName:Direct=TCP:" + managerIp + "\\private$\\RequestQueue",	// da da delaem share request y managera
-				"FormatName:Direct=TCP:" + agentIp +"\\private$\\InvalidQueue", new Agent.Agent());
+			const string managerIp = "192.168.0.101";	// IPv4 менеджера сообщений
+
+#pragma warning disable 618
+			var agentIp = Dns.GetHostByName(Dns.GetHostName()).AddressList[0].ToString();	// наш IPv4 (агента)
+#pragma warning restore 618
+
+			new MsmqReplierAdapter(managerIp, agentIp, new Agent.Agent());
 
 	        Console.ReadLine();
         }

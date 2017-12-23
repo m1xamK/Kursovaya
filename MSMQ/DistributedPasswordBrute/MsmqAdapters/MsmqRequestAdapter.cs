@@ -17,7 +17,7 @@ namespace MsmqAdapters
         /// <param name="replyQueueName">Имя очереди ответов</param>
         public MsmqRequestorAdapter() //string requestQueueName, string replyQueueName)
         {
-			var managerIp = "192.168.0.100";
+			var managerIp = "192.168.0.101";
 	        string[] agentsIp = {"192.168.0.101", "192.168.0.100"};
 			string[] requestQueueName = { "FormatName:Direct=TCP:" + agentsIp[0] + "\\Private$\\RequestQueue", "FormatName:Direct=TCP:" + agentsIp[1] + "\\Private$\\RequestQueue" };
 			string replyQueueName = "FormatName:Direct=TCP:" + managerIp + "\\Private$\\ReplyQueue";
@@ -30,6 +30,13 @@ namespace MsmqAdapters
 	        
 			_replyQueue = new MessageQueue(replyQueueName);
 
+	        try
+	        {
+				_replyQueue.Purge();
+	        }
+	        catch (Exception)
+	        {}
+		
             // Фильтр для считывания сообщения со всеми свойствами
             _replyQueue.MessageReadPropertyFilter.SetAll();
 
@@ -61,14 +68,13 @@ namespace MsmqAdapters
             
             requestMessage.ResponseQueue = _replyQueue; // Задаем обратный адрес
 			
-			requestMessage.TimeToBeReceived = TimeSpan.FromMinutes(1);
+			requestMessage.TimeToBeReceived = TimeSpan.FromMinutes(1);	// Время жизни сообщения в очереди
 
             // Отправляем сообщение
 			if (queue == null)
 				_requestQueue[++_requestCount % _requestQueue.Length].Send(requestMessage);
 			else
 				queue.Send(requestMessage);
-
 
 			// для дебага
 			Console.WriteLine("Sent request message");
@@ -82,23 +88,19 @@ namespace MsmqAdapters
 		/// </summary>
 		/// <returns>Полученное сообщение.</returns>
         public Message ReceiveSync()
-		{
-			try
-			{
-				var waitTimeOut = TimeSpan.FromMilliseconds(10);
-				Message replyMessage = _replyQueue.Receive(waitTimeOut);
+        {
+            Message replyMessage = _replyQueue.Receive();
 
-				return replyMessage;
-			}
-			catch (Exception)
-			{
-				return null;
-			}
+            if (replyMessage == null) 
+                return null;
+
+            return replyMessage;
         }
 
 		// Освобождает ресурсы, выделенные для _replyQueue
 	    public void StopSession()
 	    {
+			_replyQueue.Purge();
 		    _replyQueue.Close();
 	    }
     }

@@ -13,17 +13,21 @@ namespace MsmqAdapters
         private readonly Agent.Agent _agent;
 
 	    /// <summary>
-	    /// Для инициализации объекта MsmqReplierAdapter следует передать имена очереди запросов и очереди сообщений недопустимого формата
+		/// Для инициализации объекта MsmqReplierAdapter следует передать IP адрес менеджера сообщений и IP адрес агента для формирования
+	    /// имен очереди запросов и очереди сообщений недопустимого формата,
 	    /// объект очереди ответов указывается с помощью "обратного адреса" сообщения с запросом.
 	    /// </summary>
-	    /// <param name="requestQueueName">имя очереди запросов</param>
-	    /// <param name="invalidQueueName">имя очереди сообщений недопустимого формата</param>
+		/// <param name="managerIp">IPv4 адрес менеджера</param>
+		/// <param name="agentIp">IPv4 адрес агента</param>
 	    /// <param name="agent">экземпляр класса предназначенный непосредственно для обработки сообщения</param>
-	    public MsmqReplierAdapter(String requestQueueName, String invalidQueueName, Agent.Agent agent)
+	    public MsmqReplierAdapter(String managerIp, String agentIp, Agent.Agent agent)
         {
             _agent = agent;
+
+		    var requestQueueName = "FormatName:Direct=TCP:" + managerIp + "\\private$\\RequestQueue";
 		    MessageQueue requestQueue = new MessageQueue(requestQueueName, true);
 
+		    var invalidQueueName = "FormatName:Direct=TCP:" + agentIp + "\\private$\\InvalidQueue";
             _invalidQueue = new MessageQueue(invalidQueueName);
 
             requestQueue.MessageReadPropertyFilter.SetAll();
@@ -83,7 +87,7 @@ namespace MsmqAdapters
 	                str = str.Substring(0, str.Length - 1);
                 }
 				replyMessage.Body = str;
-
+	            replyMessage.ResponseQueue = requestQueue;
                 replyMessage.CorrelationId = requestMessage.Id;
 
                 // Отправляем сообщение

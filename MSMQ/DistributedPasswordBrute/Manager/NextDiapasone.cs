@@ -4,7 +4,7 @@ namespace Manager
 {
 	public static class NextDiapason
 	{
-		public const string Alphabet = "0123456789abcdefghijklmnopqrstuvwxyz";	//алфавит, из которого может состоять хеш
+		public const string Alphabet = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";	//алфавит, из которого может состоять хеш
 		private const int MinLength = 4;	// Минимальная длина диапазона (она же шаг с которым происходит смещение слова)
 		private const string FirstDiapasone = "1000";	// Конец первого диапазона
 
