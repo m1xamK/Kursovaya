@@ -7,7 +7,7 @@ namespace Agent
 {
     public class Agent
     {
-		public const string _alphabet = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";	//алфавит, из которого может состоять хеш
+		public const string Alphabet = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";	//алфавит, из которого может состоять хеш
 		
 	    /// <summary>
 		/// Ищет пароли свертки которых находятся в hashSumList.
@@ -69,27 +69,27 @@ namespace Agent
 			char lastSymb = str[len - 1];
 
             // Если последняя буква бегунка последняя буква алфавита.
-            if (lastSymb == _alphabet.Last())
+            if (lastSymb == Alphabet.Last())
             {
                 // Дошли до начала, прошли весь цикл.
                 if (len == 1)
                 {
-					str.Replace(lastSymb, _alphabet.First(), 0, 1);
-					str.Append(_alphabet.First());
+					str.Replace(lastSymb, Alphabet.First(), 0, 1);
+					str.Append(Alphabet.First());
                 }
                 // Меняем последнюю букву.
                 else
                 {
 					str.Remove(len - 1, 1);
 					NextSymb(ref str);
-					str.Append(_alphabet.First());
+					str.Append(Alphabet.First());
                 }
 
             }
             else
             {
-                int ind = _alphabet.IndexOf(lastSymb);	// Индекс текущего последнего элемента комбинации.
-                lastSymb = _alphabet[ind + 1];
+                int ind = Alphabet.IndexOf(lastSymb);	// Индекс текущего последнего элемента комбинации.
+                lastSymb = Alphabet[ind + 1];
 
 				// Заменяем на следующий символ.
 				str.Remove(len - 1, 1);
