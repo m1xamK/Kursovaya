@@ -8,24 +8,26 @@ namespace Agent.Tests
 	[TestFixture]
 	class MsmqRequestorAdapterTest
 	{
-		private readonly string RequestQueue = "FormatName:Direct=TCP:192.168.43.233\\Private$\\RequestQueue";
-		private readonly string ReplyQueue = "FormatName:Direct=TCP:192.168.43.233\\Private$\\ReplyQueue";
-		private readonly string InvalidQueue = "FormatName:Direct=TCP:192.168.43.233\\Private$\\InvalidQueue";
+		private readonly string managerIp = "192.168.0.101";
+		private readonly string agentIp = "192.168.0.101";
 
 		private Message SendTestMessage(string start, string finish, string[] hashArr)
 		{
-			var requestAdapter = new MsmqRequestorAdapter();//RequestQueue, ReplyQueue);
+			var requestAdapter = new MsmqRequestorAdapter();
 
 			requestAdapter.Send(start, finish, hashArr);
 			return requestAdapter.ReceiveSync();
 		}
 
+		/// <summary>
+		/// Для тестирования необходимо изменить путь к файлу конфига.
+		/// </summary>
 		[Test]
 		public void ValidMessage()
 		{
 			// ReSharper disable once UnusedVariable
 			// нужен неявно, так как в конструкторе подписывается на событие прихода сообщения в очередь и обрабатывает его.
-			var replierAdapter = new MsmqReplierAdapter(RequestQueue, InvalidQueue, new Agent());
+			var replierAdapter = new MsmqReplierAdapter(managerIp, agentIp, new Agent());
 
 			string start = "0";
 			string finish = "1000";

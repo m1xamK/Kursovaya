@@ -12,19 +12,15 @@ namespace Agent.Tests
         /// </summary>
 		[Test]
 		public void TestOneSimple()
-		{
-			var zeroHash = new Agent().Md5Hash("0");                        // MD5, который мы ищем.
-		    var hashArr = new List<string>();                               // Массив из искомых хешей.
-		    hashArr.Add(zeroHash);
+        {
+	        var password = "123";
+			string hash = "202cb962ac59075b964b07152d234b70";
+			var expectedPair = new KeyValuePair<string, string>(hash, password);
 
-            var resArr = new Agent().SearchPassword("0", "zzz", hashArr);   // Результат поиска от 0 до zzz.
-			
-            // Ожидаемый ответ.
-			List<KeyValuePair<string, string>> answerArr = new List<KeyValuePair<string, string>>();
-			var zeroPair = new KeyValuePair<string, string>(zeroHash, "0");
-			answerArr.Add(zeroPair);
+	        var resultPair = new Agent().SearchPassword("0", "1000", new List<string> {hash});
 
-			Assert.That(answerArr, Is.EqualTo(resArr));
+			Assert.That(resultPair[0].Key, Is.EqualTo(expectedPair.Key));
+			Assert.That(resultPair[0].Value, Is.EqualTo(expectedPair.Value));
 		}
 
         /// <summary>
@@ -33,18 +29,14 @@ namespace Agent.Tests
 	    [Test]
 	    public void TestOneLong()
 	    {
-            var longHash = new Agent().Md5Hash("small"); // MD5, который мы ищем.
-            var hashArr = new List<string>();           // Массив из искомых хешей.
-	        hashArr.Add(longHash);
+			var password = "Aac";
+			string hash = "74787479717e3e2fa0e72ec5f96d47ff";
+			var expectedPair = new KeyValuePair<string, string>(hash, password);
 
-            var resArr = new Agent().SearchPassword("s0000", "zzzzz", hashArr);  // Результат поиска от zzzz до zzzzz.
+			var resultPair = new Agent().SearchPassword("0", "1000", new List<string> { hash });
 
-            // Ожидаемый ответ.
-	        List<KeyValuePair<string, string>> answerArr = new List<KeyValuePair<string, string>>();
-	        var longPair = new KeyValuePair<string, string>(longHash, "small");
-	        answerArr.Add(longPair);
-
-	        Assert.That(answerArr, Is.EqualTo(resArr));
+			Assert.That(resultPair[0].Key, Is.EqualTo(expectedPair.Key));
+			Assert.That(resultPair[0].Value, Is.EqualTo(expectedPair.Value));
 	    }
 
 	    /// <summary>
@@ -53,46 +45,18 @@ namespace Agent.Tests
 	    [Test]
 	    public void TestSeveralFull()
 	    {
-	        string[] passwdArr = {"aac", "bfd", "gfds"};
+	        string[] passwdArr = {"fag", "123", "Aac"};
+			var hashArr = new List<string> { "c592eff5625d551b0c5be656377ff871", "202cb962ac59075b964b07152d234b70", "74787479717e3e2fa0e72ec5f96d47ff" };          // Массив хешей
 
-	        List<string> hashArr = new List<string>();          // Массив хешей
-	        // Ожидаемый ответ.
-	        List<KeyValuePair<string, string>> answerArr = new List<KeyValuePair<string, string>>();
+			List<KeyValuePair<string, string>> expectedList = new List<KeyValuePair<string, string>>{
+				new KeyValuePair<string, string>("202cb962ac59075b964b07152d234b70", "123"),
+				new KeyValuePair<string, string>("c592eff5625d551b0c5be656377ff871", "fag"),
+				new KeyValuePair<string, string>("74787479717e3e2fa0e72ec5f96d47ff", "Aac")
+				};
 
-	        foreach (var passwd in passwdArr)
-	        {
-                var hash = new Agent().Md5Hash(passwd);     
-                hashArr.Add(hash);
-                answerArr.Add(new KeyValuePair<string, string>(hash, passwd));
-	        }
+			var answerList = new Agent().SearchPassword("0", "zzzz", hashArr);   // Результат поиска от 0 до zzzz.
 
-	        var resArr = new Agent().SearchPassword("0", "zzzz", hashArr);   // Результат поиска от 0 до zzzz.
-
-	        Assert.That(answerArr, Is.EqualTo(resArr));
-	    }
-
-	    /// <summary>
-	    /// Подбираем несколько паролей. Ожидается полное совпадение правильного ответа с полученным.
-	    /// </summary>
-	    [Test]
-	    public void TestSeveralPart()
-	    {
-	        string[] passwdArr = { "aac", "bfd", "gfds", "feiod" };
-
-	        List<string> hashArr = new List<string>();          // Массив хешей
-	        // Ожидаемый ответ.
-	        List<KeyValuePair<string, string>> answerArr = new List<KeyValuePair<string, string>>();
-
-	        foreach (var passwd in passwdArr)
-	        {
-	            var hash = new Agent().Md5Hash(passwd);
-	            hashArr.Add(hash);
-	            answerArr.Add(new KeyValuePair<string, string>(hash, passwd));
-	        }
-
-	        var resArr = new Agent().SearchPassword("0", "zzzz", hashArr);   // Результат поиска от 0 до zzzz.
-
-	        Assert.That(answerArr, !Is.SubsetOf(resArr));                    // Правильный ответ не является подмножеством полученного результата.
+			Assert.That(answerList, Is.EqualTo(expectedList));
 	    }
     }
 }

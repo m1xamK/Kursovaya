@@ -6,6 +6,24 @@ namespace Agent.Tests
 	[TestFixture]
 	class ManagerTest
 	{
+		/*[Test]
+		public void ValidMessage()
+		{
+			// ReSharper disable once UnusedVariable
+			// нужен неявно, так как в конструкторе подписывается на событие прихода сообщения в очередь и обрабатывает его.
+			var replierAdapter = new MsmqReplierAdapter(managerIp, agentIp, new Agent());
+
+			string start = "0";
+			string finish = "1000";
+
+			string password = "zs";
+			var hash = new Agent().Md5Hash(password);
+			string[] hashArr = { hash };
+
+			var message = SendTestMessage(start, finish, hashArr);
+
+			Assert.That(hash + " " + password, Is.EqualTo(message.Body.ToString()));
+		}*/
 		[Test]
 		public void NextWordSimpleTest()
 		{

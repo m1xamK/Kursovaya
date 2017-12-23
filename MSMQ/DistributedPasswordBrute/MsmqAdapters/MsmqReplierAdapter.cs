@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Messaging;
 
 namespace MsmqAdapters
@@ -82,12 +83,11 @@ namespace MsmqAdapters
 				string str = "";
                 if (passwdList.Count != 0)
                 {
-	                foreach (var pair in passwdList)
-		                str += pair.Key + " " + pair.Value + " ";
+	                str = passwdList.Aggregate(str, (current, pair) => current + (pair.Key + " " + pair.Value + " "));
 
 	                str = str.Substring(0, str.Length - 1);
                 }
-				replyMessage.Body = str;
+	            replyMessage.Body = str;
 	            replyMessage.ResponseQueue = requestQueue;
                 replyMessage.CorrelationId = requestMessage.Id;
 

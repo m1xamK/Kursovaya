@@ -15,10 +15,11 @@ namespace MsmqAdapters
         /// <summary>
         /// Инициализирует объект класса MsmqRequestorAdapter
         /// </summary>
-        public MsmqRequestorAdapter() //string requestQueueName, string replyQueueName)
+        public MsmqRequestorAdapter()
         {
 	        _requestQueue = new List<MessageQueue>();
-	        string configPath = "ip_config_manager.txt";
+			string configPath = "ip_config_manager.txt";
+				//"C:\\Users\\Mikhail\\Documents\\Visual Studio 2013\\Projects\\Kursovaya\\Kursovaya\\MSMQ\\DistributedPasswordBrute\\Tests\\Files\\ip_config_manager.txt";
 	        string managerIp;
 			List<string> agentsIp = new List<string>();
 
